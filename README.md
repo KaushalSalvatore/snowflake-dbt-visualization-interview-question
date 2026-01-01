@@ -1,11 +1,12 @@
 ### snowflake interview question
 
 #### What is snowflake
-```bash
+
+\`\`\`bash
 
 Snowflake is a cloud-native data platform and Software-as-a-Service (SaaS) that provides a data warehouse, data lake, and data engineering solution, known for its unique architecture that separates storage and compute for independent scaling, performance, and cost-efficiency, enabling secure data sharing and analytics across clouds (AWS, Azure, GCP). It's a managed service, allowing users to focus on data insights rather than infrastructure, supporting workloads from BI to AI with SQL, Python, and integrations with major tools. 
 
-```
+\`\`\`
 
 #### Key Features & Architecture
 
