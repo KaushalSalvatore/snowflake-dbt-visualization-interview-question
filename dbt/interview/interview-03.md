@@ -27,8 +27,11 @@ when running the project.
 4. Continuous Integration (CI) & Continuous Deployment (CD)
 ```
 
-#### Q-2
+#### Q-2 You’re tasked with creating a DBT model that integrates data from different sources, each with different update frequencies (e.g., daily and weekly updates). How would you structure your DBT models to handle these differences effectively ? 
 ```bash
+Once the staging models are established, create a transformation model that combines the data. This model 
+should be designed to accommodate the varying data update frequencies. Implementing incremental models can 
+enhance efficiency, allowing DBT to only process the new or changed records based on the update frequency.
 ```
 
 #### Q-3
