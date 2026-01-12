@@ -3,9 +3,14 @@
 CREATE TABLE cust_clone CLONE customers;
 ```
 
-#### Q-2 Load data using COPY ? 
+#### Q-2 How do you load data into Snowflake? ? 
 ```bash
+1. Bulk Load: COPY INTO from stages.
 COPY INTO customers FROM @stage;
+
+2. Snowpipe: Continuous loading (serverless).
+
+3. ETL Tools: Informatica, Talend, Matillion.
 ```
 
 #### Q-3 How to flatten JSON ?
@@ -32,6 +37,7 @@ precomputed results, which can improve performance by reducing the need for reca
 
 Virtual Warehouses: Choose the right size for virtual warehouses based on workload. Virtual warehouses can be 
 resized vertically or horizontally to meet specific demands.
+
 
 Data Caching: Snowflake automatically caches query results, making subsequent queries faster. Leveraging this 
 cache by reusing previous query results can reduce the load on the system and improve performance.
@@ -64,14 +70,11 @@ Snowpipe is Snowflake’s continuous data ingestion service that enables real-ti
 of data into Snowflake. It automatically loads data into Snowflake as soon as new files appear in a stage, 
 whether the data is in an internal or external stage.
 
-
 | COPY           | Snowpipe               |
 | -------------- | ---------------------- |
 | Manual / batch | Continuous auto-ingest |
 | User triggered | Event driven           |
 | Cheaper        | Near real-time         |
-
-
 ```
 
 #### Q-8 What are Snowflake’s features for data recovery and time travel ?
@@ -215,14 +218,26 @@ formats like JSON, Avro, Parquet, and XML without requiring any transformation b
 uses a special data type called VARIANT to store semi-structured data.
 ```
 
-#### Q-18
+#### Q-18 Can you discuss how Snowflake’s compatibility with ANSI SQL standards influences the querying and data manipulation capabilities?
 ```bash
+ANSI SQL stands for American National Standards Institute Structured Query Language and is a standard 
+language for relational database management systems.
+
+This means that Snowflake users can use familiar SQL syntax and operations for querying data, such as 
+JOINs, making this a great feature for SQL-experienced users to transition to Snowflake. 
 ```
 
-#### Q-20
+#### Q-20 What is the difference between shared-disk and shared-nothing architectures ?
 ```bash
-```
+Shared-disk and shared-nothing architectures are two different approaches to database and data warehouse design. 
+The main difference between the two is how they manage the storage and process of data across multiple nodes 
+in a system.
 
-#### Q-21
-```bash
+In a shared-disk architecture, the nodes in the system have access to disk storage, which means that any node 
+within that system can read from or write to any disk in this system. This allows for high availability as 
+the failure of a single node does not cause data loss or unavailability.
+
+shared-nothing architecture is when each node in the system has its own private storage, which is not 
+shared with other nodes. The data is partitioned across the nodes, which means that each node is responsible 
+for a subset of the data.
 ```

@@ -1,4 +1,3 @@
-
 #### Q-1 What is Snowflake architecture ?
 ```bash
 Three layers:
@@ -66,9 +65,11 @@ When loading semi-structured data into Snowflake, users can store the data in VA
 hold nested and complex data structures.
 ```
 
-#### Q-8 What is zero-copy cloning ?
+#### Q-8 What is zero-copy cloning in Snowflake, and why is it important?
 ```bash
-- Creates instant copies without duplicating data.
+Zero-copy cloning is a feature in Snowflake that allows users to create a copy of a database, schema, 
+or table without duplicating the underlying storage. When a zero-copy clone is created, it points to the 
+original data and only stores changes made to the cloned data, resulting in significant storage savings. 
 ```
 
 #### Q-9 What is Fail-safe?
@@ -83,8 +84,15 @@ External = S3, Azure Blob, GCS
 stage > Temporary storage for loading/unloading data.
 ``` 
 
-#### Q-11 What is metadata ?
+#### Q-11 Can you explain the role of the Metadata Service in Snowflake and how it contributes to performance?
 ```bash
+The Metadata Service in Snowflake is part of the Cloud Services Layer, and it plays a critical role in query 
+optimization and data management. This service tracks data storage locations, access patterns, and metadata for 
+tables, columns, and partitions.
+
+Additionally, the Metadata Service manages and updates the Result Cache, allowing for faster query retrievals 
+when similar queries are executed within a short timeframe.
+
 Information about stored data used for optimization.
 ``` 
 
@@ -100,8 +108,32 @@ Skipping unnecessary micro-partitions during queries.
 - manual :- Yes, but Snowflake manages it automatically. 
 ```
 
-#### Q-14 Difference between scaling up and scaling out ?
+#### Q-14 Difference between scaling up and scaling out and Explain the process of optimizing warehouse scaling in Snowflake ?
 ```bash
+Monitor Workload Patterns: Begin by analyzing query performance, usage patterns, and peak load times. 
+Use Snowflake's monitoring tools to gather insights on warehouse usage and identify trends.
+
+Right-Sizing Warehouses: Choose the appropriate warehouse size based on workload requirements. Snowflake 
+offers multiple warehouse sizes (X-Small, Small, Medium, Large, etc.), and selecting the right size can enhance 
+performance without overspending.
+
+Auto-Scaling Configuration: Configure auto-scaling to dynamically adjust the size of the warehouse based on demand. 
+This allows Snowflake to scale up during peak times and scale down during low usage periods, optimizing resource0 
+allocation.
+
+Concurrency Management: Implement concurrency scaling if your organization experiences high levels of concurrent 
+queries. This feature automatically provisions additional compute resources to handle increased demand, ensuring 
+consistent performance.
+
+Scheduled Scaling: For predictable workloads, consider setting up scheduled scaling. This allows you to pre-emptively 
+increase the warehouse size during known peak times (e.g., end-of-month reporting) and reduce it during off-peak times.
+
+Performance Testing: Regularly conduct performance testing to assess the effectiveness of scaling strategies. 
+Analyze query execution times and resource utilization to identify areas for improvement.
+
+Feedback Loops: Engage with users and stakeholders to gather feedback on query performance and resource usage. 
+Continuous communication can provide valuable insights into optimizing warehouse scaling.
+
 - Up = bigger warehouse
 - Out = more clusters
 ```
@@ -150,19 +182,30 @@ Single cluster → queries queue
 Multi-cluster → Snowflake spins up new clusters
 ```
 
-#### Q-18 Difference between transient and temporary?
+#### Q-18 What is the difference between a transient and permanent table ? 
 ```bash
-- Temporary = session based
-- Transient = permanent
+Permanent Tables: These tables store data indefinitely. Data in permanent tables is retained unless 
+explicitly deleted or dropped. They also include a fail-safe feature that provides additional data protection, 
+allowing users to recover data for up to 90 days after deletion.
+
+Transient Tables: These tables are designed for temporary use. Data in transient tables is not subject to the 
+fail-safe feature, meaning it is lost immediately after deletion or when the table is dropped. They are suitable 
+for data that does not need long-term retention.
+
+Permanent Tables: These tables are ideal for storing critical data that requires long-term retention, such as 
+transactional data, customer records, or historical data 
+
+Transient Tables: Transient tables are best used for intermediate data processing, temporary storage, or data 
+that only needs to exist for the duration of a specific workflow or analysis. 
 ```
 
 #### Q-19 What is QUALIFY?
 ```bash
-- Filters window functions.
+Filters window functions.
 ```
 
 #### Q-20 Difference between WHERE and QUALIFY?
 ```bash
-- WHERE → before window
-- QUALIFY → after window
+WHERE → before window
+QUALIFY → after window
 ```
