@@ -174,7 +174,8 @@ Zero Impact on Other Workloads: With multi-cluster architecture, different virtu
 ensuring that resource-intensive queries or tasks do not impact others. For instance, heavy ETL processes can run on 
 one cluster while another cluster serves live analytics queries.
 
-Automatic Scaling: Snowflake automatically handles the creation and management of additional compute clusters when needed, providing on-demand scalability to match workload fluctuations.
+Automatic Scaling: Snowflake automatically handles the creation and management of additional compute clusters when 
+needed, providing on-demand scalability to match workload fluctuations.
 
 Example -
 100 users run queries at the same time
