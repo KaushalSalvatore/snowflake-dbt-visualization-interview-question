@@ -72,7 +72,7 @@ packages:
 
 #### Q-11 Describe how you would test the integrity of date fields in your dbt models ?
 ```bash
-dbt provides a way to perform custom data tests; you can write SQL expressions that return records that 
+dbt provides a way to perform custom data tests you can write SQL expressions that return records that 
 violate data integrity.
 
 SELECT

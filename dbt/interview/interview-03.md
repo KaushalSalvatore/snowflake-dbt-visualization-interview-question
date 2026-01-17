@@ -139,7 +139,7 @@ dbt build --select model_name
 Builds a specific model and its tests.
 ```
 
-#### Q-11 Runs models that depend on a specific source. ? 
+#### Q-11 Runs models that depend on a specific source ? 
 ```bash
 dbt run --select source:raw.sales
 ```

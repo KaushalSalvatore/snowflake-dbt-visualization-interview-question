@@ -17,11 +17,11 @@ for managing the security, governance, and overall user experience.
 
 #### Q-2 What makes Snowflake different from traditional DWs ?
 ```bash
-```
 - Separation of storage & compute
 - Auto-scaling
 - Pay-as-you-use
 - No index management
+```
 
 #### Q-3 What are micro-partitions in Snowflake, and what is its contribution to the platform's data storage efficiency ?
 ```bash
@@ -84,7 +84,7 @@ External = S3, Azure Blob, GCS
 stage > Temporary storage for loading/unloading data.
 ``` 
 
-#### Q-11 Can you explain the role of the Metadata Service in Snowflake and how it contributes to performance?
+#### Q-11 Can you explain the role of the Metadata Service in Snowflake and how it contributes to performance ?
 ```bash
 The Metadata Service in Snowflake is part of the Cloud Services Layer, and it plays a critical role in query 
 optimization and data management. This service tracks data storage locations, access patterns, and metadata for 
@@ -145,7 +145,7 @@ Continuous communication can provide valuable insights into optimizing warehouse
 - Use result cache
 ```
 
-#### Q-16 What is a Snowflake schema, and how is it used in data modeling??
+#### Q-16 What is a Snowflake schema, and how is it used in data modeling ? 
 ```bash
 A Snowflake schema is a type of database schema that organizes data into a multi-level structure of 
 related tables. It is an extension of the Star Schema, where each dimension is normalized into multiple 
@@ -161,7 +161,7 @@ Efficiency: While the snowflake schema reduces data redundancy, it may require m
 the data compared to a star schema.
 ```
 
-#### Q-17 How Snowflake  multi-cluster , handles concurrency,advantages,architecture?
+#### Q-17 How Snowflake  multi-cluster , handles concurrency,advantages,architecture ?
 ```bash
 Concurrency Scaling: Snowflake automatically spins up multiple clusters to handle high concurrency without 
 performance degradation. This is especially useful for organizations with many users or varied workloads.
