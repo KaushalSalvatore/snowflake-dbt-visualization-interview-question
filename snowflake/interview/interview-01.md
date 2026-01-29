@@ -118,7 +118,7 @@ offers multiple warehouse sizes (X-Small, Small, Medium, Large, etc.), and selec
 performance without overspending.
 
 Auto-Scaling Configuration: Configure auto-scaling to dynamically adjust the size of the warehouse based on demand. 
-This allows Snowflake to scale up during peak times and scale down during low usage periods, optimizing resource0 
+This allows Snowflake to scale up during peak times and scale down during low usage periods, optimizing resource
 allocation.
 
 Concurrency Management: Implement concurrency scaling if your organization experiences high levels of concurrent 

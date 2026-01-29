@@ -162,11 +162,51 @@ dbt run --select package:my_package
 #### Q-15 Lists models, tests, sources, etc ? 
 ```bash
 dbt ls
+dbt ls --resource-type model (this show model list)
 ```
 
-#### Q-16 Lists only models ?
+#### Q-16 YAML files are configuration and metadata files. ?
 ```bash
-dbt ls --resource-type model
+-> dbt_project.yml (Required – exactly one)
+
+What it does:
+Project name
+Model paths
+Materializations (table/view/incremental)
+Seeds & snapshots config
+Variables
+On-run hooks
+Model-level configurations
+
+-> schema.yml (or any .yml inside models folder)
+Model descriptions
+Column descriptions
+Tests
+Source definitions
+Relationships
+
+-> sources.yml (Optional, but common)
+select * from {{ source('raw', 'users') }}
+
+-> snapshots.yml (If using snapshots)
+Defines snapshot configs.
+
+-> packages.yml (Optional – for installing packages)
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 1.1.1
+
+-> profiles.yml
+Defines database connection.
+my_profile:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: dbt
+      password: pass
+      dbname: mydb
 ```
 
 #### Q-17 Lists resources with a specific tag ? 
