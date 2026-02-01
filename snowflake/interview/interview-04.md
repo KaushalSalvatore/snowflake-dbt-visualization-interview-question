@@ -5,16 +5,41 @@ enabling near real-time data integration without reloading full datasets. Primar
 feature records DML changes, allowing for incremental, cost-effective data pipeline updates. 
 ```
 
-#### Q-2
+#### Q-2 expalin RBAC(Roll Base Access Control) 
 ```bash
+Access to data and actions is controlled by ROLES, not directly by users
+Users → get Roles
+Roles → get Privileges
+Privileges → apply to Objects (tables, schemas, warehouses, etc.)
 ```
 
-#### Q-3
+#### Q-3 What is Caching in Snowflake ? 
 ```bash
+Snowflake has three types of caching: Result Cache, Local Disk Cache, and Remote Disk Cache. Result cache stores final 
+query results for 24 hours and returns results instantly if the same query is executed again without data changes. Local 
+disk cache stores micro-partitions in the warehouse SSD, and remote disk cache stores data in cloud storage to improve performance and reduce compute cost.
+
+How to Check If Query Used Cache?
+Query History → Check “Bytes Scanned”
+If 0 bytes scanned → result cache used
+
+How to Disable Result Cache?
+ALTER SESSION SET USE_CACHED_RESULT = FALSE;
+
 ```
 
-#### Q-4
+#### Q-4 What is VALIDATION_MODE in Snowflake ?
 ```bash
+VALIDATION_MODE is used with the COPY INTO command to check data errors without actually loading the data into the 
+table.
+
+COPY INTO employees
+FROM @my_stage/employees.csv
+FILE_FORMAT = (TYPE = CSV)
+VALIDATION_MODE = RETURN_ERRORS;
+
+VALIDATION_MODE is used in COPY INTO command to validate staged data files without loading them into the target table. 
+It helps identify errors like data type mismatch, missing columns, or format issues before actual data loading.
 ```
 
 #### Q-5
