@@ -15,9 +15,27 @@ Privileges → apply to Objects (tables, schemas, warehouses, etc.)
 
 #### Q-3 What is Caching in Snowflake ? 
 ```bash
-Snowflake has three types of caching: Result Cache, Local Disk Cache, and Remote Disk Cache. Result cache stores final 
-query results for 24 hours and returns results instantly if the same query is executed again without data changes. Local 
-disk cache stores micro-partitions in the warehouse SSD, and remote disk cache stores data in cloud storage to improve performance and reduce compute cost.
+Snowflake has three caching layers: Result cache (stores query results for 24 hours), Warehouse cache 
+(stores scanned data in local SSD while warehouse is active), and Metadata cache (stores table statistics and 
+micro-partition info for pruning). Result cache avoids compute usage entirely if conditions match.
+
+Step 1 → Result Cache Check
+Snowflake checks:
+Has this exact query run before?
+Has data changed?
+If yes → return cached result instantly.
+If no →
+
+Step 2 → Metadata Cache Used
+Snowflake checks micro-partitions:
+Finds only partitions containing department = 'IT'
+Prunes unnecessary partitions
+
+Step 3 → Warehouse Cache Check
+Warehouse checks:
+Is required data already in SSD?
+If yes → faster scan
+If no → load from cloud storage
 
 How to Check If Query Used Cache?
 Query History → Check “Bytes Scanned”
@@ -26,6 +44,12 @@ If 0 bytes scanned → result cache used
 How to Disable Result Cache?
 ALTER SESSION SET USE_CACHED_RESULT = FALSE;
 
+| Feature                     | Result Cache | Warehouse Cache | Metadata Cache       |
+| --------------------------- | ------------ | --------------- | -------------------- |
+| Stores                      | Final result | Scanned data    | Table info           |
+| Duration                    | 24 hours     | Until suspend   | Managed by Snowflake |
+| User control                | Yes          | No              | No                   |
+| Requires warehouse running? | No           | Yes             | Yes                  |
 ```
 
 #### Q-4 What is VALIDATION_MODE in Snowflake ?
@@ -42,32 +66,167 @@ VALIDATION_MODE is used in COPY INTO command to validate staged data files witho
 It helps identify errors like data type mismatch, missing columns, or format issues before actual data loading.
 ```
 
-#### Q-5
+#### Q-5 Types of Time Travel in Snowflake ?
 ```bash
+AT -> Used to query data at a specific time in the past. (Timestamp / Offset / Statement)
+SELECT * 
+FROM employees 
+AT (TIMESTAMP => '2026-02-01 10:00:00');
+
+SELECT * 
+FROM employees 
+AT (OFFSET => -3600);
+
+SELECT * 
+FROM employees 
+AT (STATEMENT => '01b71944-0001-b181-0000-0129032279f6');
+
+SELECT * 
+FROM employees 
+BEFORE (TIMESTAMP => '2026-02-01 10:00:00');
+
+AT	Query data at a specific time
+BEFORE	Query data before a specific time
+UNDROP	Restore dropped objects
+CLONE + AT	Create historical copy
 ```
 
-#### Q-6
+#### Q-6 Row data connect to snowflake using dataframe and snowpark ? 
 ```bash
+pip install snowflake-snowpark-python
+
+from snowflake.snowpark import Session
+
+connection_parameters = {
+    "account": "your_account",
+    "user": "your_username",
+    "password": "your_password",
+    "role": "your_role",
+    "warehouse": "your_warehouse",
+    "database": "your_database",
+    "schema": "your_schema"
+}
+
+session = Session.builder.configs(connection_parameters).create()
+
+data = [(1, "John", 5000)]
+
+df = session.create_dataframe(
+    data,
+    schema=["id", "name", "salary"]
+)
+
+df.write.mode("overwrite").save_as_table("employees")
+
+If Data Already Exists in Table
+df = session.table("employees")
+df.show()
 ```
 
-#### Q-7
+#### Q-7 How we connect python code to snowflake ? 
 ```bash
+1️ -> Snowflake Connector for Python (basic SQL execution)
+2️ -> Snowpark for Python (DataFrame + advanced processing)
+
+Run -> SQL queries	-> Connector
+Work -> with DataFrames	-> Snowpark
+Build -> ETL pipeline	-> Snowpark
+Insert/Fetch -> data	-> Both
+
+Method 1: Using Snowflake Connector
+pip install snowflake-connector-python
+
+Step 2: Connect to Snowflake
+import snowflake.connector
+
+conn = snowflake.connector.connect(
+    user='YOUR_USERNAME',
+    password='YOUR_PASSWORD',
+    account='YOUR_ACCOUNT',   # e.g. xy12345.ap-south-1
+    warehouse='YOUR_WAREHOUSE',
+    database='YOUR_DATABASE',
+    schema='YOUR_SCHEMA',
+    role='YOUR_ROLE'
+)
+
+cur = conn.cursor()
+
+Step 3: Execute Query
+cur.execute("SELECT CURRENT_VERSION()")
+print(cur.fetchone())
+
+Step 4: Close Connection
+cur.close()
+conn.close()
+
+Method 2: Using Snowpark (For DataFrame Operations)
+
+Step 1: Install Snowpark
+pip install snowflake-snowpark-python
+
+Step 2: Create Session
+from snowflake.snowpark import Session
+
+connection_parameters = {
+    "account": "YOUR_ACCOUNT",
+    "user": "YOUR_USERNAME",
+    "password": "YOUR_PASSWORD",
+    "role": "YOUR_ROLE",
+    "warehouse": "YOUR_WAREHOUSE",
+    "database": "YOUR_DATABASE",
+    "schema": "YOUR_SCHEMA"
+}
+session = Session.builder.configs(connection_parameters).create()
+
+Step 3: Run Query
+df = session.sql("SELECT CURRENT_VERSION()")
+df.show()
 ```
 
-#### Q-8
+#### Q-8 How to Load Data from S3 ?
 ```bash
+CREATE STAGE my_stage
+URL='s3://my-bucket/data/'
+CREDENTIALS=(AWS_KEY_ID='xxx' AWS_SECRET_KEY='xxx');
+
+COPY INTO employees
+FROM @my_stage
+FILE_FORMAT = (TYPE = CSV);
 ```
 
-#### Q-9
+#### Q-9 Table Deleted Accidentally ? 
 ```bash
+Use UNDROP if within retention
+Otherwise contact Snowflake (Fail-safe)
+UNDROP TABLE employees;
 ```
 
-#### Q-10
+#### Q-10 What happens if warehouse is suspended ?
 ```bash
+Compute Stops
+All compute resources are shut down
+You are not charged for compute while suspended
+Only storage cost continues
+
+When a warehouse is suspended, compute resources are stopped and billing for compute stops. Running queries are 
+aborted if suspension is manual. If AUTO_RESUME is enabled, the warehouse automatically resumes when a new query arrives. 
+Local SSD cache is cleared, but result cache remains available.
 ```
 
-#### Q-11
+#### Q-11 Query is slow. Should you scale up or scale out ?
 ```bash
+If single query slow → Scale Up
+If many queries waiting in queue → Scale Out
+
+Scaling up increases warehouse size to improve performance of a single query. Scaling out increases cluster count 
+to handle concurrency. Use scaling up for heavy transformations and scaling out for multiple simultaneous users.
+
+| Feature   | Scaling Up               | Scaling Out                |
+| --------- | ------------------------ | -------------------------- |
+| Increases | Warehouse size           | Number of clusters         |
+| Solves    | Slow query               | Concurrency issue          |
+| Affects   | Single query performance | Multiple query performance |
+| Example   | MEDIUM → LARGE           | 1 cluster → 3 clusters     |
 ```
 
 #### Q-12

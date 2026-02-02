@@ -75,6 +75,31 @@ original data and only stores changes made to the cloned data, resulting in sign
 #### Q-9 What is Fail-safe?
 ```bash
 - 7-day recovery for accidental data loss (Snowflake support only).
+Fail-safe is a 7-day period AFTER Time Travel ends.
+It exists only for disaster recovery.
+
+You CANNOT:
+Query data
+Restore tables yourself
+Access historical data directly
+Only Snowflake Support can recover data from Fail-safe.
+
+-> When Fail-safe Starts
+Active Data
+   ↓
+Time Travel (1–90 days)
+   ↓
+Fail-safe (7 days, fixed)
+   ↓
+Permanent deletion
+
+If retention = 1 day:
+Day 1 → You can recover data (Time Travel)
+Day 2–8 → Data in Fail-safe (only Snowflake can restore)
+After Day 8 → Data permanently deleted
+
+Time Travel = Self-service recovery
+Fail-safe = Snowflake emergency recovery
 ```
 
 #### Q-10 What is internal vs external stage ?
@@ -136,6 +161,15 @@ Continuous communication can provide valuable insights into optimizing warehouse
 
 - Up = bigger warehouse
 - Out = more clusters
+
+ALTER WAREHOUSE my_wh
+SET WAREHOUSE_SIZE = 'LARGE';
+
+Enable Multi-Cluster
+ALTER WAREHOUSE my_wh
+SET MIN_CLUSTER_COUNT = 1
+    MAX_CLUSTER_COUNT = 3
+    SCALING_POLICY = 'STANDARD';
 ```
 
 #### Q-15 How to reduce Snowflake cost ?

@@ -83,6 +83,8 @@ Time Travel: Snowflake’s Time Travel feature allows users to query historical 
 data to a previous state. This can be extremely useful in recovering from accidental data changes or deletions. 
 Time Travel allows access to data from a specified point in time (up to 90 days) by using the AT or BEFORE clauses 
 in queries.
+ALTER TABLE employees 
+SET DATA_RETENTION_TIME_IN_DAYS = 7;
 
 Fail-safe: Snowflake’s Fail-safe feature ensures that data can be recovered in the event of a catastrophic failure, 
 even if it’s past the Time Travel period. Fail-safe provides a 7-day period during which Snowflake retains backups 
@@ -122,6 +124,9 @@ Queries frequently filter on the same column
 Micro-partition overlap is high
 
 ALTER TABLE sales CLUSTER BY (order_date);
+
+ALTER TABLE employees 
+CLUSTER BY (department, salary);
 ```
 
 #### Q-11 How does Snowflake handle data consistency and ACID compliance ?
