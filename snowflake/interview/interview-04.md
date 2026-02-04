@@ -229,8 +229,53 @@ to handle concurrency. Use scaling up for heavy transformations and scaling out 
 | Example   | MEDIUM → LARGE           | 1 cluster → 3 clusters     |
 ```
 
-#### Q-12
+#### Q-12 snowflake how share  table database to other ex  sales and analytics team required steps and required setting and quries
 ```bash
+In Snowflake, you can share data in two main ways:
+
+1️ Internal sharing (same Snowflake account, different departments)
+2️ Secure Data Sharing (different Snowflake accounts)
+
+To share tables internally, I create roles, grant USAGE on database and schema, grant SELECT or DML on tables, 
+and assign roles to users. For cross-account sharing, I create a SHARE object, grant database/schema/table access 
+to it, and add the consumer account.
+
+✅ SCENARIO 1: Share Table with Sales & Analytics Teams (Same Account)
+Best practice → Use Role-Based Access Control (RBAC)
+
+Step 1: Create Roles
+CREATE ROLE sales_role;
+CREATE ROLE analytics_role;
+
+Step 2: Grant Usage on Database
+Without USAGE, they cannot even see the database.
+GRANT USAGE ON DATABASE company_db TO ROLE sales_role;
+GRANT USAGE ON DATABASE company_db TO ROLE analytics_role;
+
+Step 3: Grant Usage on Schema
+GRANT USAGE ON SCHEMA company_db.public TO ROLE sales_role;
+GRANT USAGE ON SCHEMA company_db.public TO ROLE analytics_role;
+
+Step 4: Grant Access on Table
+If Read-only access:
+GRANT SELECT ON TABLE company_db.public.orders TO ROLE sales_role;
+GRANT SELECT ON TABLE company_db.public.orders TO ROLE analytics_role;
+
+If Sales team needs insert/update:
+GRANT INSERT, UPDATE ON TABLE company_db.public.orders TO ROLE sales_role;
+
+Step 5: Assign Role to Users
+GRANT ROLE sales_role TO USER sales_user1;
+GRANT ROLE analytics_role TO USER analyst_user1;
+
+SCENARIO 2: Share Database to Another Snowflake Account (Secure Data Sharing)
+
+Step 1: Create Share
+CREATE SHARE sales_share;
+
+Step 2: Grant Database & Schema Access to Share
+GRANT USAGE ON DATABASE company_db TO SHARE sales_share;
+GRANT USAGE ON SCHEMA company_db.public TO SHARE sales_share;
 ```
 
 #### Q-13
