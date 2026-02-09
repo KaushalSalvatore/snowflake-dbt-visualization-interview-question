@@ -229,7 +229,7 @@ to handle concurrency. Use scaling up for heavy transformations and scaling out 
 | Example   | MEDIUM → LARGE           | 1 cluster → 3 clusters     |
 ```
 
-#### Q-12 snowflake how share  table database to other ex  sales and analytics team required steps and required setting and quries
+#### Q-12 snowflake how share table database to other ex sales and analytics team required steps and required setting and quries
 ```bash
 In Snowflake, you can share data in two main ways:
 
@@ -278,8 +278,33 @@ GRANT USAGE ON DATABASE company_db TO SHARE sales_share;
 GRANT USAGE ON SCHEMA company_db.public TO SHARE sales_share;
 ```
 
-#### Q-13
+#### Q-13 Important Snowflake Concepts Related to Data Purging ? 
 ```bash
+Data purging means permanently deleting data from a database so it cannot be recovered.
+
+1️. DELETE vs PURGE
+DELETE
+DELETE FROM table_name WHERE condition;
+
+Removes rows logically
+Data is still recoverable
+Snowflake keeps it for Time Travel retention period
+
+PURGE
+To permanently remove data without keeping it in Time Travel:
+DROP TABLE table_name PURGE;
+
+Skips Time Travel
+Immediately removes historical data
+Cannot be recovered
+
+TRUNCATE
+
+TRUNCATE TABLE table_name;
+
+Removes all rows
+Faster than DELETE
+Still subject to Time Travel
 ```
 
 #### Q-14

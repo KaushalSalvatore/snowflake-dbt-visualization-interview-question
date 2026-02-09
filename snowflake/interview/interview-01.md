@@ -45,6 +45,16 @@ Clustering in Snowflake refers to the process of organizing data in a way that i
 particularly for large datasets. Snowflake uses automatic clustering by default, meaning it automatically manages 
 data distribution and storage optimization. Users can define cluster keys to help Snowflake organize data more 
 efficiently based on commonly queried columns. 
+
+Clustering in Snowflake is a technique used to organize data inside micro-partitions to improve query performance.
+
+Snowflake automatically stores data in micro-partitions (50–500 MB compressed).
+Clustering helps Snowflake:
+Scan fewer partitions
+Reduce query cost
+Improve performance for large tables
+
+
 ```
 
 #### Q-6 Can you tell me how to access the Snowflake Cloud data warehouse ?
@@ -128,6 +138,16 @@ Skipping unnecessary micro-partitions during queries.
 
 #### Q-13 What is clustering key?
 ```bash
+A clustering key defines how data should be organized in micro-partitions.
+
+CREATE TABLE HOTEL_BOOKINGS (
+    booking_id STRING,
+    hotel_city STRING,
+    check_in_date DATE,
+    total_amount NUMBER
+)
+CLUSTER BY (hotel_city, check_in_date);
+
 - what :- Defines how data is grouped in micro-partitions.
 - when :- Very large tables with frequent filters. 
 - manual :- Yes, but Snowflake manages it automatically. 
@@ -135,41 +155,35 @@ Skipping unnecessary micro-partitions during queries.
 
 #### Q-14 Difference between scaling up and scaling out and Explain the process of optimizing warehouse scaling in Snowflake ?
 ```bash
-Monitor Workload Patterns: Begin by analyzing query performance, usage patterns, and peak load times. 
-Use Snowflake's monitoring tools to gather insights on warehouse usage and identify trends.
+Scaling Up → Increase warehouse size (more power per node)
 
-Right-Sizing Warehouses: Choose the appropriate warehouse size based on workload requirements. Snowflake 
-offers multiple warehouse sizes (X-Small, Small, Medium, Large, etc.), and selecting the right size can enhance 
-performance without overspending.
+Scaling Out → Add more clusters (more parallel nodes)
 
-Auto-Scaling Configuration: Configure auto-scaling to dynamically adjust the size of the warehouse based on demand. 
-This allows Snowflake to scale up during peak times and scale down during low usage periods, optimizing resource
-allocation.
+1. Scaling Up (Vertical Scaling)
+ALTER WAREHOUSE HOTEL_WH 
+SET WAREHOUSE_SIZE = 'LARGE'; (X-SMALL SMALL MEDIUM LARGE X-LARGE 2X-LARGE 3X-LARGE 4X-LARGE)
 
-Concurrency Management: Implement concurrency scaling if your organization experiences high levels of concurrent 
-queries. This feature automatically provisions additional compute resources to handle increased demand, ensuring 
-consistent performance.
+What Happens?
+More CPU
+More memory
+Faster single-query performance
+Better for complex transformations
 
-Scheduled Scaling: For predictable workloads, consider setting up scheduled scaling. This allows you to pre-emptively 
-increase the warehouse size during known peak times (e.g., end-of-month reporting) and reduce it during off-peak times.
+2. Scaling Out (Horizontal Scaling)
+Scaling out means adding multiple clusters to handle concurrency.
 
-Performance Testing: Regularly conduct performance testing to assess the effectiveness of scaling strategies. 
-Analyze query execution times and resource utilization to identify areas for improvement.
+ALTER WAREHOUSE HOTEL_WH 
+SET MAX_CLUSTER_COUNT = 3;
 
-Feedback Loops: Engage with users and stakeholders to gather feedback on query performance and resource usage. 
-Continuous communication can provide valuable insights into optimizing warehouse scaling.
+What Happens?
+More queries can run in parallel
+Reduces queueing
+Ideal for dashboard users
 
-- Up = bigger warehouse
-- Out = more clusters
-
-ALTER WAREHOUSE my_wh
-SET WAREHOUSE_SIZE = 'LARGE';
-
-Enable Multi-Cluster
-ALTER WAREHOUSE my_wh
-SET MIN_CLUSTER_COUNT = 1
-    MAX_CLUSTER_COUNT = 3
-    SCALING_POLICY = 'STANDARD';
+When to Scale Out
+Many users running queries at same time
+BI dashboards
+High concurrency
 ```
 
 #### Q-15 How to reduce Snowflake cost ?
@@ -197,24 +211,26 @@ the data compared to a star schema.
 
 #### Q-17 How Snowflake  multi-cluster , handles concurrency,advantages,architecture ?
 ```bash
-Concurrency Scaling: Snowflake automatically spins up multiple clusters to handle high concurrency without 
-performance degradation. This is especially useful for organizations with many users or varied workloads.
+A multi-cluster warehouse is a virtual warehouse that can automatically start multiple compute clusters to handle 
+high query concurrency.
 
-Separation of Compute and Storage: Compute and storage are decoupled, so users can scale compute resources 
-independently based on demand without affecting storage. This flexibility allows Snowflake to handle multiple 
-workloads simultaneously without conflicts.
+Instead of increasing the size (scaling up), Snowflake adds more clusters of the same size (scaling out).
 
-Zero Impact on Other Workloads: With multi-cluster architecture, different virtual warehouses can run independently, 
-ensuring that resource-intensive queries or tasks do not impact others. For instance, heavy ETL processes can run on 
-one cluster while another cluster serves live analytics queries.
+ALTER WAREHOUSE BI_WH
+SET MIN_CLUSTER_COUNT = 1
+MAX_CLUSTER_COUNT = 3
+SCALING_POLICY = 'STANDARD';
 
-Automatic Scaling: Snowflake automatically handles the creation and management of additional compute clusters when 
-needed, providing on-demand scalability to match workload fluctuations.
+This means:
+Minimum 1 cluster always available
+Can scale up to 3 clusters during high load
+Snowflake auto-manages cluster creation
 
 Example -
 100 users run queries at the same time
 Single cluster → queries queue
 Multi-cluster → Snowflake spins up new clusters
+
 ```
 
 #### Q-18 What is the difference between a transient and permanent table ? 

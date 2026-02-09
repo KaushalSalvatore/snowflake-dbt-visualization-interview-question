@@ -20,32 +20,32 @@ SELECT value FROM table, LATERAL FLATTEN(input => column);
 
 #### Q-4 What are Snowflake’s best practices for performance optimization? Query on a 2TB table is slow.
 ```bash
-Clustering: Use clustering keys on large tables to organize the data for faster access. Snowflake automatically 
-manages clustering, but for large tables or specific query patterns, defining a cluster key can significantly 
-improve performance.
+Step 1: Analyze the Query Profile (Always First)
 
-Micro-Partitioning: Snowflake automatically divides data into small, manageable partitions. Query performance 
-can be improved by ensuring that queries filter on partitioned columns, reducing the amount of data that needs 
-to be scanned. 
+Query Optimization Best Practices
+Avoid SELECT *
+Snowflake is columnar → scanning fewer columns = faster query.
 
-Query Optimization: Snowflake has an intelligent query optimizer that automatically optimizes queries. However, 
-users can improve performance by writing efficient queries, avoiding complex joins, and limiting the number of 
-queries run simultaneously on a single virtual warehouse.
+Use Proper Filtering (Partition Pruning)
 
-Materialized Views: Use materialized views for frequently queried or aggregate data. Materialized views store 
-precomputed results, which can improve performance by reducing the need for recalculating results on every query.
+Avoid Functions in WHERE
+WHERE YEAR(check_in_date) = 2025; (bad)
+WHERE check_in_date BETWEEN '2025-01-01' AND '2025-12-31' (good)
 
-Virtual Warehouses: Choose the right size for virtual warehouses based on workload. Virtual warehouses can be 
-resized vertically or horizontally to meet specific demands.
+Optimize Joins
+Join on matching data types
+Avoid joining large-to-large without filters
+Pre-aggregate if possible
+
+Step - 2 Table Optimization
+
+Use Clustering Keys
+Use Materialized Views (For Heavy Aggregations)
 
 
-Data Caching: Snowflake automatically caches query results, making subsequent queries faster. Leveraging this 
-cache by reusing previous query results can reduce the load on the system and improve performance.
-
-Data Storage Optimization: Use compression for large datasets, and store only necessary data to avoid large, 
-unoptimized tables.
-
-ALTER TABLE sales CLUSTER BY (order_date);
+Step - 3 Warehouse Optimization
+Query Execution Time High → Scale Up
+Queue Time High → Enable Multi-Cluster
 ```
 
 #### Q-5 Cost Control?  Warehouse running continuously ?
@@ -103,6 +103,11 @@ Fail-safe → Catastrophic failure recovery
 
 #### Q-9 How Snowflake handles skewed data ?
 ```bash
+Snowflake handles skewed data using dynamic task distribution, broadcast joins, and automatic micro-partitioning. 
+However, severe skew can still impact performance because query execution time depends on the slowest worker. 
+To mitigate skew, we should avoid low-cardinality join keys, use proper filtering, apply composite clustering, 
+and scale warehouses appropriately.
+
 Snowflake mitigates skew using:
 Automatic micro-partitioning
 Dynamic query optimization
@@ -136,7 +141,7 @@ ACID (Atomicity, Consistency, Isolation, Durability) properties:
 Atomicity: All database operations in Snowflake are atomic, meaning that they either complete successfully or are 
 rolled back entirely. If a transaction fails, no partial changes are left in the system.
 
-Consistency: Snowflake maintains a consistent state of the database at all times. Once a transaction is completed, 
+Con sistency: Snowflake maintains a consistent state of the database at all times. Once a transaction is completed, 
 the data is guaranteed to be valid according to all defined constraints and rules.
 
 Isolation: Snowflake ensures that concurrent transactions do not interfere with each other. It uses isolation levels 
