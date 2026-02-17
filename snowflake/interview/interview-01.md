@@ -53,8 +53,6 @@ Clustering helps Snowflake:
 Scan fewer partitions
 Reduce query cost
 Improve performance for large tables
-
-
 ```
 
 #### Q-6 Can you tell me how to access the Snowflake Cloud data warehouse ?
