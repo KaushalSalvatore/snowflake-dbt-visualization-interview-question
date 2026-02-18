@@ -95,6 +95,13 @@ PHP PDO Driver.
 ```bash
 They enable near-real-time data processing by automatically refreshing query results from streaming sources 
 using Delayed View Semantics.
+
+CREATE OR REPLACE DYNAMIC TABLE my_dynamic_table
+TARGET_LAG = '5 minutes'
+WAREHOUSE = my_warehouse
+AS
+SELECT *
+FROM source_table;
 ```
 
 #### Q-11 How does Snowflake support data governance ?

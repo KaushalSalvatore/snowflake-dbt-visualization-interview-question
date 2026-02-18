@@ -246,6 +246,26 @@ transactional data, customer records, or historical data
 
 Transient Tables: Transient tables are best used for intermediate data processing, temporary storage, or data 
 that only needs to exist for the duration of a specific workflow or analysis. 
+
+Permanent Table :- 
+CREATE TABLE my_table (
+    id INT,
+    name STRING
+);
+
+Transient Table :- 
+CREATE TRANSIENT TABLE my_table (
+    id INT,
+    name STRING
+);
+
+Transient Table in DBT:- 
+{{ config(
+    materialized='table',
+    transient=true
+) }}
+
+SELECT * FROM source_table
 ```
 
 #### Q-19 What is QUALIFY?
