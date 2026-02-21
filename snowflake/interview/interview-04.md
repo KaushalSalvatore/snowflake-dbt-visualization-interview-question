@@ -307,8 +307,27 @@ Faster than DELETE
 Still subject to Time Travel
 ```
 
-#### Q-14
+#### Q-14 fact table and dimension table which should load first in snowflake ?
 ```bash
+Load Dimension Tables first, then Fact Tables
+Fact tables depend on dimensions through foreign keys.
+Dimension tables contain descriptive attributes (e.g., customer, product, date).
+Fact tables store measurable data (e.g., sales, transactions) and reference dimension keys.
+
+If dimensions are not loaded first:
+Fact table loads may fail due to missing foreign key references.
+You risk data integrity issues.
+
+Typical Load Order
+Dimension Tables
+Example: dim_customer, dim_product, dim_date
+Often involve surrogate key generation
+
+Fact Tables
+Example: fact_sales, fact_orders
+Use keys from dimension tables
+
+“Dimensions describe, Facts measure — so describe first, measure later.”
 ```
 
 #### Q-15
