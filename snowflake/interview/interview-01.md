@@ -264,7 +264,6 @@ Transient Table in DBT:-
     materialized='table',
     transient=true
 ) }}
-
 SELECT * FROM source_table
 ```
 

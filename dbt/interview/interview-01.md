@@ -225,6 +225,31 @@ sources:
 Pre-hooks and Post-hooks are mechanisms to execute SQL commands or scripts before and after the execution 
 of dbt models, respectively. dbt is an open-source tool that enables analytics engineers to transform data 
 in their warehouse more effectively.
+
+A pre-hook runs before dbt builds your model.
+Use it when you need to:
+Delete old data
+Insert audit logs
+Set session variables
+Create temp tables
+Run maintenance SQL
+
+{{ config(
+    materialized='table',
+    pre_hook="DELETE FROM audit_table WHERE model_name = 'my_model'"
+) }}
+SELECT * FROM source_table
+
+A post-hook runs after the model is built.
+{{ config(
+    materialized='table',
+    pre_hook="DELETE FROM audit_table WHERE model_name = 'my_model'"
+) }}
+SELECT * FROM source_table
+
+Real-Life Example :
+Use pre-hook to delete bad records
+Use post-hook to update an audit table with row count
 ```
 
 #### Q-17 what is snapshots ?
