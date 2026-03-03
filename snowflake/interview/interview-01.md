@@ -228,7 +228,6 @@ Example -
 100 users run queries at the same time
 Single cluster → queries queue
 Multi-cluster → Snowflake spins up new clusters
-
 ```
 
 #### Q-18 What is the difference between a transient and permanent table ? 

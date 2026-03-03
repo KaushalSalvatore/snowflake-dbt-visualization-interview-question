@@ -330,12 +330,55 @@ Use keys from dimension tables
 “Dimensions describe, Facts measure — so describe first, measure later.”
 ```
 
-#### Q-15
+#### Q-15 Explain CDC and how you have implemented it in snowflake ?
 ```bash
+In Snowflake, I’ve implemented CDC using:
+Streams
+Tasks
+MERGE statements
+
+Overview : Source → Landing Table → Stream → Merge into Target → Task Scheduler
+
+COPY INTO raw_orders
+FROM @my_stage
+FILE_FORMAT = (TYPE = 'CSV');
+
+CREATE OR REPLACE STREAM raw_orders_stream 
+ON TABLE raw_orders;
+
+MERGE INTO orders_target t
+USING raw_orders_stream s
+ON t.id = s.id
+
+WHEN MATCHED AND s.METADATA$ACTION = 'DELETE'
+    THEN DELETE
+
+WHEN MATCHED AND s.METADATA$ACTION = 'INSERT'
+    THEN UPDATE SET 
+        t.amount = s.amount,
+        t.updated_at = s.updated_at
+
+WHEN NOT MATCHED
+    THEN INSERT (id, amount, updated_at)
+    VALUES (s.id, s.amount, s.updated_at);
+
+CREATE OR REPLACE TASK orders_cdc_task
+WAREHOUSE = my_wh
+SCHEDULE = '5 MINUTE'
+AS
+MERGE INTO orders_target ...
 ```
 
-#### Q-16
+#### Q-16 How to perform SCD Type 2 using SQL or stored procedures ?
 ```bash
+CREATE OR REPLACE TABLE dim_customer (
+    customer_id STRING,
+    name STRING,
+    city STRING,
+    start_date DATE,
+    end_date DATE,
+    is_current BOOLEAN
+);
 ```
 
 #### Q-17
