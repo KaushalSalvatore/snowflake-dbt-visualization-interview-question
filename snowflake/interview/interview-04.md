@@ -381,11 +381,28 @@ CREATE OR REPLACE TABLE dim_customer (
 );
 ```
 
-#### Q-17
+#### Q-17 how to create a view table ? 
 ```bash
+Suppose you have a table:
+
+CREATE TABLE employees (
+    emp_id INT,
+    emp_name STRING,
+    salary NUMBER,
+    department STRING
+);
+
+Now you want a view for high-salary employees:
+
+CREATE VIEW high_salary_employees AS
+SELECT emp_id, emp_name, salary
+FROM employees
+WHERE salary > 50000;
+
+SELECT * FROM high_salary_employees;
 ```
 
-#### Q-18
+#### Q-18 
 ```bash
 ```
 

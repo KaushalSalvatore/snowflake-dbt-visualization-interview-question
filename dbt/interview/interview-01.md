@@ -243,7 +243,7 @@ SELECT * FROM source_table
 A post-hook runs after the model is built.
 {{ config(
     materialized='table',
-    pre_hook="DELETE FROM audit_table WHERE model_name = 'my_model'"
+    post_hook="DELETE FROM audit_table WHERE model_name = 'my_model'"
 ) }}
 SELECT * FROM source_table
 
