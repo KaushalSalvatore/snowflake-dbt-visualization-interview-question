@@ -402,12 +402,35 @@ WHERE salary > 50000;
 SELECT * FROM high_salary_employees;
 ```
 
-#### Q-18 
+#### Q-18  how to handle Snowflake in fault tolerance ?
 ```bash
+1️⃣ Multi-Cluster Virtual Warehouses
+CREATE WAREHOUSE analytics_wh
+WITH WAREHOUSE_SIZE = 'MEDIUM'
+MIN_CLUSTER_COUNT = 1
+MAX_CLUSTER_COUNT = 3
+AUTO_RESUME = TRUE
+AUTO_SUSPEND = 300;
+
+2️⃣ Time Travel
+SELECT * 
+FROM orders AT (TIMESTAMP => '2026-03-05 10:00:00');
+
+3️⃣ Fail-safe
+After Time Travel expires, Snowflake still keeps data for 7 days.
+
+4️⃣ External Stage Backup
+CREATE STAGE backup_stage
+URL='s3://company-backup';
 ```
 
-#### Q-19
+#### Q-19 how to create snow pipe for streaming data
 ```bash
+create or replace pipe order_data 
+Auto_ingest = true 
+As 
+copy into raw_orders
+form @s3_stage
 ```
 
 #### Q-20

@@ -14,7 +14,9 @@ COPY INTO customers FROM @stage;
 ```
 
 #### Q-3 How to flatten JSON ?
-```bash
+```bash 
+create table orders (value variant)
+
 SELECT value FROM table, LATERAL FLATTEN(input => column);
 ```
 
