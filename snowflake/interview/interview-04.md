@@ -433,6 +433,68 @@ copy into raw_orders
 form @s3_stage
 ```
 
-#### Q-20
+#### Q-20 how to implementy SDC in snowflake ? 
 ```bash
+1️⃣ Table Structure for SCD Type 2
+
+CREATE TABLE dim_customer (
+    customer_id INT,
+    name STRING,
+    city STRING,
+    start_date DATE,
+    end_date DATE,
+    current_flag STRING
+);
+2️⃣ Source Table (New Data)
+
+CREATE TABLE stage_customer (
+    customer_id INT,
+    name STRING,
+    city STRING
+);
+
+3️⃣ Implement SCD Type 2 Using MERGE
+
+MERGE INTO dim_customer tgt
+USING stage_customer src
+ON tgt.customer_id = src.customer_id
+AND tgt.current_flag = 'Y'
+
+WHEN MATCHED 
+AND (tgt.name <> src.name OR tgt.city <> src.city)
+THEN UPDATE SET
+    tgt.end_date = CURRENT_DATE,
+    tgt.current_flag = 'N'
+ 
+WHEN NOT MATCHED
+THEN INSERT (
+    customer_id,
+    name,
+    city,
+    start_date,
+    end_date,
+    current_flag
+)
+VALUES (
+    src.customer_id,
+    src.name,
+    src.city,
+    CURRENT_DATE,
+    NULL,
+    'Y'
+);
+
+4️⃣ Implement SCD Type 1 Using MERGE
+MERGE INTO dim_customer tgt
+USING stage_customer src
+ON tgt.customer_id = src.customer_id
+
+WHEN MATCHED THEN
+UPDATE SET
+    tgt.name = src.name,
+    tgt.city = src.city
+
+WHEN NOT MATCHED THEN
+INSERT (customer_id, name, city)
+VALUES (src.customer_id, src.name, src.city);
 ```

@@ -56,10 +56,6 @@ Snowflake supports workloads from BI to AI using:
 
 - Data Sharing & Collaboration
 
-
-
-
-
 ![Warehouse Architecture](./snowflake/images/image_1.png)
 
 ![Use Case](./snowflake/images/image_2.png)
