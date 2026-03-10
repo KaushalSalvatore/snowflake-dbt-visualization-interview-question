@@ -324,4 +324,18 @@ sources:
 ```bash
 The Job Scheduler is the main component for running DBT jobs in the cloud and it simplifies the process to 
 build data pipelines. It handles both event-based and CORN-based schedules.
+
+Why Job Scheduling is Needed in dbt
+Data pipelines usually need to run daily, hourly, or after data ingestion. A scheduler helps to:
+Automate dbt runs
+Maintain data freshness
+Execute transformations in sequence
+Monitor job success or failure
+Send alerts if jobs fail
+
+1️⃣ dbt Project Commands
+dbt deps
+dbt run
+dbt test
+dbt snapshot
 ```

@@ -17,7 +17,10 @@ COPY INTO customers FROM @stage;
 ```bash 
 create table orders (value variant)
 
-SELECT value FROM table, LATERAL FLATTEN(input => column);
+SELECT value FROM orders, LATERAL FLATTEN(input => column);
+
+FLATTEN converts nested JSON or array data into multiple rows.
+LATERAL allows the FLATTEN function to access columns from the table row being processed.
 ```
 
 #### Q-4 What are Snowflake’s best practices for performance optimization? Query on a 2TB table is slow.
