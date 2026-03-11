@@ -47,7 +47,6 @@ Step - 2 Table Optimization
 Use Clustering Keys
 Use Materialized Views (For Heavy Aggregations)
 
-
 Step - 3 Warehouse Optimization
 Query Execution Time High → Scale Up
 Queue Time High → Enable Multi-Cluster

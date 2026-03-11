@@ -232,11 +232,79 @@ dbt run --fail-fast
 Stops execution immediately when a model fails.
 ```
 
-#### Q-20 State & CI/CD Use Cases ? 
+#### Q-20 how do we use snowflake table to dbt  ? 
 ```bash
-dbt build --select state:modified+
-Builds only modified models and their dependencies.
+To use a Snowflake table in dbt, you usually access it as a source table or reference it inside dbt models. 
+The most common workflow is:
 
-dbt run --defer --state prod_artifacts/
-Uses production artifacts to avoid rebuilding unchanged models (CI/CD magic ✨).
+Configure Snowflake connection in dbt
+Declare the Snowflake table as a source
+Use source() in your dbt model
+
+1. Configure Snowflake Connection in dbt
+
+profiles.yml
+
+my_dbt_project:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: your_account
+      user: your_user
+      password: your_password
+      role: your_role
+      database: MY_DATABASE
+      warehouse: MY_WAREHOUSE
+      schema: ANALYTICS
+      threads: 4
+
+2. Define the Snowflake Table as a Source
+sources.yml
+
+version: 2
+
+sources:
+  - name: raw_data
+    database: MY_DATABASE
+    schema: RAW
+    tables:
+      - name: customers
+
+3. Use the Snowflake Table in a dbt Model
+
+SELECT *
+FROM {{ source('raw_data', 'customers') }}
+
+4. Transform the Data Using dbt Models
+
+SELECT
+    customer_id,
+    UPPER(customer_name) AS customer_name
+FROM {{ source('raw_data', 'customers') }}
+
+5. run model class for transformation 
+dbt run
+
+Snowflake Table (RAW.CUSTOMERS)
+          ↓
+{{ source('raw_data','customers') }}
+          ↓
+stg_customers (dbt model)
+          ↓
+dim_customers (dbt model)
+
+6. Typical Production Architecture
+
+Snowflake RAW schema
+   ↓
+source()
+
+Snowflake STAGING schema
+   ↓
+stg_models
+
+Snowflake MART schema
+   ↓
+final analytics tables
 ```

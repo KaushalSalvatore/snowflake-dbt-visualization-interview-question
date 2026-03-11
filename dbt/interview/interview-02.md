@@ -27,7 +27,7 @@ in the model file. For example: ‘schema: marketing.
 
 #### Q-5 Do model names must be unique ? 
 ```bash
-Yes because, dependencies between models are built using the ref function.And it only takes the model 
+Yes because, dependencies between models are built using the ref function. And it only takes the model 
 name as an argument. So, models even in distinct folders must have unique names.
 ```
 
@@ -103,6 +103,27 @@ Use Case  ->  Used within the DBT project for model dependencies    Used to conn
 Dependency Handling  ->   Ensures proper build order of models      Tracks external data dependencies
 Configuration -> No additional configuration is needed      Requires defining sources in sources.yml
 Schema Changes -> Automatically adapts to schema changes   Does not handle schema changes automatically
+
+ref :-
+
+SELECT * FROM {{ ref('customers') }}
+
+source :-
+
+schema.yml
+sources:
+  - name: raw_data
+    tables:
+      - name: customers
+
+SELECT * FROM {{ source('raw_data', 'customers') }}
+
+SELECT
+    o.order_id,
+    c.customer_name
+FROM {{ ref('orders') }} o
+JOIN {{ source('raw_data', 'customers') }} c
+ON o.customer_id = c.id
 ```
 
 #### Q-14 Explain how you’ve optimized complex DBT models to improve performance. What techniques do you use to minimize run times when dealing with large datasets ?

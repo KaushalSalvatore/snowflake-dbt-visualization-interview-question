@@ -51,9 +51,10 @@ Specify the action that the task will perform using ‘CALL’ using the stored 
 
 CREATE TASK daily_sales_datacamp
   WAREHOUSE = 'datacampwarehouse'
-  SCHEDULE = 'USING CRON 0 1 * * * UTC'
+  SCHEDULE = '5 min'
   AS
-  CALL daily_sales_datacamp();
+  Insert into dim_sales
+  select * from sales_stream;
 ```
 
 #### Q-6 How do you create a clone of an existing table in Snowflake ?
@@ -80,15 +81,12 @@ consistency. Use a prefix to indicate the type of access, e.g., 'READ_', 'WRITE_
 4. Analyze with dashboards (Power BI, Tableau).
 ```
 
-#### Q-9 List the drivers and connectors available in Snowflake ?
+#### Q-9 How would you handle late-arriving data in a batch ETL pipeline in snowflake ?
 ```bash
-.NET Driver
-JDBC Driver
-ODBC Driver
-Node.js Driver
-Go Driver
-Connector for Python, Kafka & Spark
-PHP PDO Driver.
+1️⃣ Use MERGE (Upsert) Instead of Simple INSERT
+2️⃣ Reprocess a Sliding Window of Data
+3️⃣ Automate with Tasks
+4️⃣ Use Streams to Capture Late Changes
 ```
 
 #### Q-10 What is the benefit of Dynamic Tables in Snowflake ?
@@ -260,6 +258,7 @@ COMMIT;  -- or ROLLBACK if needed
 ```bash
 1. Streams and Tasks: Snowflake allows for continuous data ingestion using streams, which capture changes in 
 real-time from source tables.
+Create or replace stream customer_stream on table customer
 
 2. Snowpipe: Snowpipe is Snowflake’s continuous data ingestion service that allows users to load data into 
 Snowflake as soon as it arrives in an external stage (e.g., Amazon S3). 
