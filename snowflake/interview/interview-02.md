@@ -145,7 +145,7 @@ ACID (Atomicity, Consistency, Isolation, Durability) properties:
 Atomicity: All database operations in Snowflake are atomic, meaning that they either complete successfully or are 
 rolled back entirely. If a transaction fails, no partial changes are left in the system.
 
-Con sistency: Snowflake maintains a consistent state of the database at all times. Once a transaction is completed, 
+Consistency: Snowflake maintains a consistent state of the database at all times. Once a transaction is completed, 
 the data is guaranteed to be valid according to all defined constraints and rules.
 
 Isolation: Snowflake ensures that concurrent transactions do not interfere with each other. It uses isolation levels 

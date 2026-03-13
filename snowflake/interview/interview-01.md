@@ -266,9 +266,64 @@ Transient Table in DBT:-
 SELECT * FROM source_table
 ```
 
-#### Q-19 What is QUALIFY?
+#### Q-19 What Deployment Strategy follow ETL pipeline in Snowflake ? 
 ```bash
-Filters window functions.
+1️⃣ Environment-Based Deployment Strategy
+DEV  →  TEST / QA  →  PROD
+DEV_DB
+TEST_DB
+PROD_DB
+
+2️⃣ Version Control
+Developer → Feature Branch → Pull Request → Main Branch
+
+3️⃣ CI/CD Pipeline
+Code Commit
+     ↓
+Build & Unit Tests
+     ↓
+Deploy to DEV
+     ↓
+Deploy to QA
+     ↓
+Deploy to PROD
+
+4️⃣ Data Loading Strategy
+Source Systems
+      ↓
+Stage Files
+      ↓
+Staging Tables
+      ↓
+Transformation Layer
+      ↓
+Final Analytics Tables
+
+5️⃣ Orchestration
+Airflow DAG
+     ↓
+Load Data to Snowflake
+     ↓
+Run Transformations
+     ↓
+Run Data Quality Checks
+
+6️⃣ Testing Strategy
+Unit testing of SQL logic
+Data validation checks
+Schema validation
+Performance testing
+
+7️⃣ Monitoring & Alerting
+Airflow logs
+Snowflake query history
+Alerts via Slack or email
+
+Pipeline Failure
+     ↓
+Alert Triggered
+     ↓
+Engineer Investigates
 ```
 
 #### Q-20 Difference between WHERE and QUALIFY?
