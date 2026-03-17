@@ -326,8 +326,47 @@ Alert Triggered
 Engineer Investigates
 ```
 
-#### Q-20 Difference between WHERE and QUALIFY?
+#### Q-20 When you add a new column to an existing table, how you handle it depends on your pipeline design ? 
 ```bash
-WHERE → before window
-QUALIFY → after window
+The best approach is “never break existing pipelines” — always design schema changes to be backward compatible.
+
+In Snowflake, when adding a new column:
+I use a backward-compatible approach by adding it as nullable
+Update ETL pipelines or dbt models
+Optionally backfill historical data
+Use views or versioned tables to avoid breaking downstream systems
+
+Schema Change Request
+        ↓
+Add Column (Nullable)
+        ↓
+Update ETL / dbt Models
+        ↓
+Backfill Data (Optional)
+        ↓
+Release to Production
+
+Backward-Compatible Change (BEST PRACTICE)
+Always make schema changes non-breaking
+Add column with NULL default
+Do NOT break existing queries
+
+✅ Approach 1: Backward-Compatible Change (BEST PRACTICE)
+ALTER TABLE sales ADD COLUMN new_column STRING DEFAULT NULL;
+
+✅ Approach 1: Backward-Compatible Change (BEST PRACTICE)
+UPDATE sales
+SET new_column = 'default_value'
+WHERE new_column IS NULL;
+
+✅ Approach 3: Handle in ETL / dbt Layer
+SELECT
+    col1,
+    col2,
+    COALESCE(new_column, 'NA') AS new_column
+FROM source_table
+
+✅ Approach 4: Versioned Schema Strategy (Advanced)
+sales_v1  → old schema
+sales_v2  → new schema (with new column)
 ```
