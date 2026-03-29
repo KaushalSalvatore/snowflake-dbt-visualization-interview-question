@@ -21,6 +21,21 @@ SELECT value FROM orders, LATERAL FLATTEN(input => column);
 
 FLATTEN converts nested JSON or array data into multiple rows.
 LATERAL allows the FLATTEN function to access columns from the table row being processed.
+
+{
+  "name": "John",
+  "orders": [
+    {"id": 1, "amount": 100},
+    {"id": 2, "amount": 200}
+  ]
+}
+
+SELECT 
+  t.data:name::STRING AS name,
+  f.value:id::INT AS order_id,
+  f.value:amount::INT AS amount
+FROM my_table t,
+LATERAL FLATTEN(input => t.data:orders) f;
 ```
 
 #### Q-4 What are Snowflake’s best practices for performance optimization? Query on a 2TB table is slow.
