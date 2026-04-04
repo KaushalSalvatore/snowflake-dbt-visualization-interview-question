@@ -185,8 +185,16 @@ Tests
 Source definitions
 Relationships
 
--> sources.yml (Optional, but common)
-select * from {{ source('raw', 'users') }}
+-> source.yml (Optional, but common)
+version: 2
+
+sources:
+  - name: raw_data
+    database: MY_DB
+    schema: RAW_SCHEMA
+    tables:
+      - name: sales
+      - name: customers
 
 -> snapshots.yml (If using snapshots)
 Defines snapshot configs.

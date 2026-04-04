@@ -115,6 +115,9 @@ Fail-safe = Snowflake emergency recovery
 Internal = Snowflake-managed
 External = S3, Azure Blob, GCS
 stage > Temporary storage for loading/unloading data.
+
+Although Snowflake doesn’t automatically delete staged files, in production we usually implement cleanup strategies 
+such as scheduled REMOVE commands or lifecycle policies on external storage.
 ``` 
 
 #### Q-11 Can you explain the role of the Metadata Service in Snowflake and how it contributes to performance ?
@@ -230,7 +233,7 @@ Single cluster → queries queue
 Multi-cluster → Snowflake spins up new clusters
 ```
 
-#### Q-18 What is the difference between a transient and permanent table ? 
+#### Q-18 What is the difference between a transient and permanent and  Temporary table ? 
 ```bash
 Permanent Tables: These tables store data indefinitely. Data in permanent tables is retained unless 
 explicitly deleted or dropped. They also include a fail-safe feature that provides additional data protection, 
@@ -244,7 +247,19 @@ Permanent Tables: These tables are ideal for storing critical data that requires
 transactional data, customer records, or historical data 
 
 Transient Tables: Transient tables are best used for intermediate data processing, temporary storage, or data 
-that only needs to exist for the duration of a specific workflow or analysis. 
+that only needs to exist for the duration of a specific workflow or analysis.
+Exists until explicitly dropped
+Visible to all users (based on access)
+No Fail-safe (but has Time Travel with limited retention)
+Lower storage cost
+
+
+Temporary Table : A temporary table exists only for: the current session
+
+
+Permanent table → Time Travel (0–90 days) + Fail-safe (7 days)
+Transient table → Time Travel (0–1 day only) ❗
+Temporary table → Time Travel (session only)
 
 Permanent Table :- 
 CREATE TABLE my_table (
@@ -256,6 +271,11 @@ Transient Table :-
 CREATE TRANSIENT TABLE my_table (
     id INT,
     name STRING
+);
+
+CREATE TEMPORARY TABLE temp_orders (
+    id INT,
+    amount FLOAT
 );
 
 Transient Table in DBT:- 

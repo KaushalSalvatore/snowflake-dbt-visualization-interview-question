@@ -247,13 +247,65 @@ formats like JSON, Avro, Parquet, and XML without requiring any transformation b
 uses a special data type called VARIANT to store semi-structured data.
 ```
 
-#### Q-18 Can you discuss how Snowflake’s compatibility with ANSI SQL standards influences the querying and data manipulation capabilities?
+#### Q-18 How to check performance tuning skills in Snowflake ? 
 ```bash
-ANSI SQL stands for American National Standards Institute Structured Query Language and is a standard 
-language for relational database management systems.
+example :- 1. i want to check want to check: Is clustering actually improving my query performance or not?
 
-This means that Snowflake users can use familiar SQL syntax and operations for querying data, such as 
-JOINs, making this a great feature for SQL-experienced users to transition to Snowflake. 
+1. Compare Query Performance (Before vs After)
+SELECT *
+FROM TABLE(INFORMATION_SCHEMA.QUERY_HISTORY())
+WHERE QUERY_TEXT ILIKE '%your_query%'
+ORDER BY START_TIME DESC;
+
+2. Key Metrics to Compare
+| Metric             | Meaning                          |
+| ------------------ | -------------------------------- |
+| TOTAL_ELAPSED_TIME | Query runtime                    |
+| BYTES_SCANNED      | Data scanned (very important 🔥) |
+| PARTITIONS_SCANNED | Micro-partitions read            |
+
+3. Use QUERY PROFILE (Best Way)
+
+👉 In Snowflake UI:
+
+Run query
+Click Query Profile
+
+Check:
+
+Partition pruning
+Scan reduction
+Time spent in scan
+
+4. Check Clustering Effectiveness
+SELECT SYSTEM$CLUSTERING_INFORMATION('my_table');
+
+example 2 : my query take less time when i run last time but today i run its taking more time so how i debug 
+this isses and solve it ? 
+
+If a query suddenly becomes slower, I first compare query history and execution plans to identify changes in data 
+volume, partitions scanned, or execution strategy. Then I check for caching differences, warehouse size, clustering effectiveness, and any recent data or schema changes. Based on findings, I optimize the query or adjust resources.
+
+1. Compare Query History
+SELECT 
+    QUERY_ID,
+    TOTAL_ELAPSED_TIME,
+    BYTES_SCANNED,
+    ROWS_PRODUCED,
+    WAREHOUSE_SIZE
+FROM TABLE(INFORMATION_SCHEMA.QUERY_HISTORY())
+WHERE QUERY_TEXT ILIKE '%your_query%'
+ORDER BY START_TIME DESC;
+
+2. Check Query Profile (MOST IMPORTANT)
+👉 In Snowflake UI:
+Open query → click Query Profile
+
+🔹 3. Common Reasons & Fixes
+1. Caching Effect (Most Common)
+2. Data Volume Increased
+3. Clustering Not Effective
+4. Warehouse Size Changed
 ```
 
 #### Q-20 What is the difference between shared-disk and shared-nothing architectures ?
