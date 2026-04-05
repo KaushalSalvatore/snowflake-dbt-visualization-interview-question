@@ -1,6 +1,6 @@
-#### Q-1 How to clone a table ?
+#### Q-1 How do you create a clone of an existing table in Snowflake ?
 ```bash
-CREATE TABLE cust_clone CLONE customers;
+CREATE TABLE cloned_table_name CLONE original_table_name 
 ```
 
 #### Q-2 How do you load data into Snowflake? ? 
