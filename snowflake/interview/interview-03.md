@@ -57,9 +57,60 @@ CREATE TASK daily_sales_datacamp
   select * from sales_stream;
 ```
 
-#### Q-6 How do you create a clone of an existing table in Snowflake ?
+#### Q-6 when take data from s3 to snowflake but and some file are missing in my snowflake so how i check it and how i resolve that issue ? 
 ```bash
-CREATE TABLE cloned_table_name CLONE original_table_name 
+Step 1: Validate source files in S3
+👉 “First, I confirm whether the files actually exist in S3.”
+Use:
+S3 UI or CLI (aws s3 ls)
+Check:
+File names
+Timestamps
+Expected vs actual count
+
+📌 Example:
+Expected 10 files for the day, but only 8 are present → issue is upstream, not Snowflake
+
+Step 2: Compare S3 vs Snowflake
+👉 “Then I compare what was loaded vs what exists.”
+In Snowflake:
+Query metadata:
+SELECT METADATA$FILENAME, COUNT(*)
+FROM your_table
+GROUP BY 1;
+
+👉 This tells you:
+
+Which files were loaded
+Which are missing
+
+Step 3: Check Snowflake load history
+👉 “Next, I check Snowflake load history to see if files were skipped or failed.”
+SELECT *
+FROM TABLE(INFORMATION_SCHEMA.LOAD_HISTORY(
+    TABLE_NAME => 'your_table',
+    START_TIME => DATEADD('day', -1, CURRENT_TIMESTAMP())
+));
+
+Look for:
+Status = LOADED / FAILED / PARTIALLY LOADED
+Error messages
+
+Step 4: Check Airflow / pipeline logic
+
+👉 “Then I verify orchestration logic in Apache Airflow.”
+
+Check:
+Was the task triggered for all files?
+Any dynamic file listing bug?
+Race condition (file arrived late)
+
+📌 Example:
+DAG runs at 2 AM but files arrive at 2:05 AM → missed files
+
+“In one case, files were missing because Snowflake had already marked them as loaded in a previous failed run. Since 
+COPY avoids duplicates, it skipped them silently. I resolved it using FORCE=TRUE and added file-count validation to 
+prevent recurrence.”
 ```
 
 #### Q-7 What naming conventions does your organization follow for access management ?
