@@ -78,7 +78,7 @@ Query metadata:
 SELECT METADATA$FILENAME, COUNT(*)
 FROM your_table
 GROUP BY 1;
-
+  
 👉 This tells you:
 
 Which files were loaded

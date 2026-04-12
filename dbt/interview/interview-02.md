@@ -7,7 +7,7 @@ Data Lakes: Connect to and transform data in data lakes.
 
 #### Q-2 How DBT is used to automate your data workflow ?
 ```bash
-Scheduled Runs: Schedule DBT runs using tools like Air flow or DBT Cloud.
+Scheduled Runs: Schedule DBT runs using tools like Airflow or DBT Cloud.
 CI/CD Integration: Integrate DBT with CI/CD pipelines for automated testing and deployment.
 Modular Design: Create reusable, modular models to simplify maintenance and automation.
 ```
