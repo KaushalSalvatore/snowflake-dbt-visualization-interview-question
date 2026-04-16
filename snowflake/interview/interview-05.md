@@ -125,24 +125,109 @@ ORDER BY EXECUTION_TIME DESC;
 -> Warehouse Sizing
 ```
 
-#### Q-4
+#### Q-4 What is Snappy file format ?
 ```bash
--> 
--> 
--> 
--> 
--> 
+Snappy is a fast compression algorithm developed by Google. It’s not a file format itself, but a compression method used 
+inside formats like:
+Parquet
+Avro
+ORC
+👉 Key idea: Speed over maximum compression
 
+✅ Pros
+Very fast compression & decompression
+Good for real-time / analytics workloads
+Widely supported in big data tools
+
+❌ Cons
+Compression ratio is lower than GZIP
+Larger file size compared to other methods
+
+🏗️ Step 1: Create File Format with Snappy
+CREATE FILE FORMAT my_parquet_format
+TYPE = 'PARQUET'
+COMPRESSION = 'SNAPPY';
+
+👉 Use Parquet + Snappy for:
+Analytics workloads
+Data lakes
+Fast query performance
+
+CREATE FILE FORMAT my_parquet_format
+TYPE = 'PARQUET'
+COMPRESSION = 'SNAPPY';
 ```
 
-#### Q-5
+#### Q-5 real-world Snowflake + S3 pipeline using Snappy compression ?
 ```bash
--> 
--> 
--> 
--> 
--> 
+🏗️ Architecture (Real Production Pattern) :-
 
+Source System
+     ↓
+S3 (Raw Files - Parquet + Snappy)
+     ↓
+Snowpipe (Auto Ingest)
+     ↓
+Bronze Table
+     ↓
+Streams + Tasks
+     ↓
+Silver → Gold
+
+📦 Step 1: Data Stored in S3 (Snappy Format)
+s3://my-bucket/sales/
+   ├── sales_1.parquet (Snappy compressed)
+   ├── sales_2.parquet
+
+🔐 Step 2: Create Snowflake Stage
+
+CREATE STAGE my_s3_stage
+URL = 's3://my-bucket/sales/'
+CREDENTIALS = (
+    AWS_KEY_ID = 'xxx'
+    AWS_SECRET_KEY = 'yyy'
+);
+
+⚙️ Step 3: Create File Format (Snappy Parquet)
+CREATE FILE FORMAT parquet_snappy_format
+TYPE = PARQUET
+COMPRESSION = SNAPPY;
+
+📥 Step 4: Load Data (Batch or Auto)
+Option A: Batch Load
+
+COPY INTO bronze_sales
+FROM @my_s3_stage
+FILE_FORMAT = (FORMAT_NAME = parquet_snappy_format);
+
+Option B: Auto Ingestion (Snowpipe)
+
+CREATE PIPE my_pipe
+AUTO_INGEST = TRUE
+AS
+COPY INTO bronze_sales
+FROM @my_s3_stage
+FILE_FORMAT = (FORMAT_NAME = parquet_snappy_format);
+
+🔄 Step 5: Transform (Streams + Tasks)
+CREATE STREAM sales_stream ON TABLE bronze_sales;
+
+CREATE TASK silver_task
+SCHEDULE = '5 MINUTE'
+AS
+MERGE INTO silver_sales t
+USING sales_stream s
+ON t.id = s.id
+WHEN MATCHED THEN UPDATE
+WHEN NOT MATCHED THEN INSERT;
+
+⚡ Real Performance Benchmarks
+
+| Format           | Size (1TB raw) |
+| ---------------- | -------------- |
+| CSV              | 1 TB           |
+| GZIP CSV         | ~200–300 GB    |
+| Parquet + Snappy | ~100–200 GB    |
 ```
 
 #### Q-6
