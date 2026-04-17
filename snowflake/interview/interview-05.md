@@ -230,44 +230,119 @@ WHEN NOT MATCHED THEN INSERT;
 | Parquet + Snappy | ~100–200 GB    |
 ```
 
-#### Q-6
+#### Q-6 what is data masking in snowflake ?
 ```bash
--> 
--> 
--> 
--> 
--> 
+Data masking in Snowflake is a security feature that lets you hide or obfuscate sensitive data (like PII) based on 
+who is querying it.
 
+Data masking in Snowflake is a security feature that hides sensitive data dynamically based on user roles. It uses 
+masking policies applied at the column level, ensuring that different users see different representations of the 
+same data without altering the underlying data.
+
+Why Data Masking is Used
+Protect sensitive data (PAN, Aadhaar, email, salary)
+Enable secure data sharing
+Meet compliance (GDPR, HIPAA, etc.)
+Allow analysts to work without exposing real data
+
+Step 1: Create Masking Policy
+
+CREATE MASKING POLICY mask_email AS (val STRING)
+
+RETURNS STRING ->
+    CASE
+        WHEN CURRENT_ROLE() IN ('ADMIN') THEN val
+        ELSE '****@gmail.com'
+    END;
+
+Step 2: Apply Policy to Column
+
+ALTER TABLE customers
+MODIFY COLUMN email
+SET MASKING POLICY mask_email;
+
+Important Notes
+Masking happens during query execution
+Doesn’t change actual stored data
+Works with views, tables, and external tables
 ```
 
-#### Q-7
+#### Q-7 what 3NT in snowflake ?
 ```bash
--> 
--> 
--> 
--> 
--> 
+3NT (Three-Part Naming) :- It’s the standard way to fully qualify any object (like a table or view) in Snowflake.
 
+DATABASE.SCHEMA.OBJECT_NAME
+
+SALES_DB.PUBLIC.ORDERS
+
+SALES_DB → Database
+PUBLIC → Schema
+ORDERS → Table
+
+SELECT * FROM ORDERS;   -- ❌ ambiguous
+SELECT * FROM SALES_DB.PUBLIC.ORDERS;  -- ✅ clear
 ```
 
-#### Q-8
+#### Q-8 how many cluseter and nodes in large size and small size data warehouse ?
 ```bash
--> 
--> 
--> 
--> 
--> 
+Cluster = group of compute resources (virtual warehouse)
+Node = underlying compute instance (managed by Snowflake, not directly visible)
 
+You don’t directly control nodes, but warehouse size roughly corresponds to node count.
+
+| Warehouse Size | Approx Nodes |
+| -------------- | ------------ |
+| X-Small        | 1 node       |
+| Small          | 2 nodes      |
+| Medium         | 4 nodes      |
+| Large          | 8 nodes      |
+| X-Large        | 16 nodes     |
+| 2X-Large       | 32 nodes     |
+| 3X-Large       | 64 nodes     |
+| 4X-Large       | 128 nodes    |
+
+
+CREATE WAREHOUSE my_wh
+WAREHOUSE_SIZE = 'LARGE'
+MIN_CLUSTER_COUNT = 1
+MAX_CLUSTER_COUNT = 3;
+
+Each cluster = 8 nodes (Large size)
+Total possible = 8 × 3 = 24 nodes
+
+⚠️ Important Notes
+Nodes are abstracted (you don’t manage them)
+Billing is based on:
+Warehouse size
+Time used
 ```
 
-#### Q-9
+#### Q-9 What is a Stored Procedure? Can a Blank Stored Procedure Run?
 ```bash
--> 
--> 
--> 
--> 
--> 
+A stored procedure is a reusable block of code (SQL + procedural logic) stored inside the database that you can 
+execute when needed.
 
+Why use Stored Procedures?
+Automate workflows
+Handle complex logic (loops, conditions)
+Reuse code
+Perform multi-step operations
+
+📌 Basic Example (Snowflake Stored Procedure)
+
+CREATE OR REPLACE PROCEDURE my_proc()
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+BEGIN
+    RETURN 'Hello World';
+END;
+$$;
+
+Can a Blank Stored Procedure Run? : No, a completely blank stored procedure cannot run
+
+✅ You can create a table inside a stored procedure
 ```
 
 #### Q-10

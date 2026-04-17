@@ -81,6 +81,37 @@ AUTO_RESUME = TRUE;
 | Result Cache    | Stores final query results (24 hrs) |
 | Warehouse Cache | Local cache per warehouse           |
 | Metadata Cache  | Used for query optimization         |
+
+:- If I have a warehouse A and warehouse b then result cache work if I run the same query
+
+Yes, result cache WILL work across warehouses (Warehouse A and Warehouse B) in Snowflake.
+
+Because result cache is NOT tied to a warehouse.
+
+example :-
+SELECT * FROM sales WHERE id = 100;
+
+-> Same query is run again
+-> Even from different warehouse (A → B)
+✅ It will return from result cache (no compute used)
+
+⏱️ Conditions for Result Cache to Work
+✅ 1. Query must be EXACTLY same
+✅ 2. Underlying data unchanged
+✅ 3. Same role & permissions
+✅ 4. Within 24 hours
+
+🚫 When It Will NOT Work
+Query text changes
+Data changes
+Different role with restricted access
+Non-deterministic functions used (e.g., CURRENT_TIMESTAMP)
+
+| Cache Type       | Scope                      |
+| ---------------- | -------------------------- |
+| Result Cache     | Global (across warehouses) |
+| Local Disk Cache | Warehouse-specific         |
+| Metadata Cache   | Global                     |
 ```
 
 #### Q-7 COPY vs Snowpipe ? 

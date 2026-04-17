@@ -194,20 +194,127 @@ High concurrency
 - Use result cache
 ```
 
-#### Q-16 What is a Snowflake schema, and how is it used in data modeling ? 
+#### Q-16 What is a Snowflake schema and star schema, and how is it used in data modeling ? 
 ```bash
-A Snowflake schema is a type of database schema that organizes data into a multi-level structure of 
-related tables. It is an extension of the Star Schema, where each dimension is normalized into multiple 
-related tables, forming a snowflake-like structure.
+Star Schema :- Dimensions are denormalized (single table)
+Snowflake Schema :- Dimensions are normalized (split into multiple tables)
 
-Normalized Dimension Tables: Unlike in a star schema, where dimension tables are denormalized, a snowflake 
-schema normalizes the dimension tables to reduce redundancy.
+Star Schema → Simple, fewer joins, faster  
+Snowflake Schema → Normalized, more joins, less redundancy
 
-Fact Tables: The central fact table contains transactional data, such as sales or revenue, with foreign 
-keys pointing to dimension tables.
+⭐ Star Schema
 
-Efficiency: While the snowflake schema reduces data redundancy, it may require more joins when querying 
-the data compared to a star schema.
+        dim_customer
+              |
+dim_product — fact_sales — dim_date
+
+❄️ Snowflake Schema
+
+        dim_customer
+              |
+dim_city → dim_state → dim_country
+              |
+          fact_sales
+              |
+           dim_date
+
+Star Schema (Denormalized) :-
+
+                    Dim_User
+          ┌────────────────────────────┐
+          │ user_id (PK)               │
+          │ username                   │
+          │ age                        │
+          │ gender                     │
+          │ city                       │
+          │ state                      │
+          │ country                    │
+          │ signup_date                │
+          └──────────┬─────────────────┘
+                     │
+                     │
+Dim_Time      ┌──────▼──────────────┐       Dim_Post
+┌──────────┐  │ Fact_User_Activity  │  ┌───────────────┐
+│ time_id  │  │---------------------│  │ post_id (PK)  │
+│ date     │  │ user_id (FK)        │  │ post_type     │
+│ day      │◄─┤ post_id (FK)        ├─►│ category      │
+│ month    │  │ time_id (FK)        │  │ created_date  │
+│ year     │  │ device_id (FK)      │  └───────────────┘
+└──────────┘  │                     │
+              │ like_count          │
+              │ comment_count       │
+              │ share_count         │
+              │ view_count          │
+              └─────────┬───────────┘
+                        │
+                        │
+                 Dim_Device
+          ┌────────────────────────┐
+          │ device_id (PK)         │
+          │ device_type            │
+          │ OS                     │
+          │ app_version            │
+          └────────────────────────┘
+
+❄️ Snowflake Schema (Normalized)
+
+                    Dim_User
+          ┌────────────────────────────┐
+          │ user_id (PK)               │
+          │ username                   │
+          │ age                        │
+          │ gender                     │
+          │ city_id (FK)               │
+          │ signup_date                │
+          └──────────┬─────────────────┘
+                     │
+                     ▼
+                 Dim_City
+          ┌────────────────────────┐
+          │ city_id (PK)           │
+          │ city_name              │
+          │ state_id (FK)          │
+          └──────────┬─────────────┘
+                     ▼
+                 Dim_State
+          ┌────────────────────────┐
+          │ state_id (PK)          │
+          │ state_name             │
+          │ country_id (FK)        │
+          └──────────┬─────────────┘
+                     ▼
+               Dim_Country
+          ┌────────────────────────┐
+          │ country_id (PK)        │
+          │ country_name           │
+          └────────────────────────┘
+
+
+Dim_Time      ┌──────▼──────────────┐       Dim_Post
+┌──────────┐  │ Fact_User_Activity  │  ┌───────────────┐
+│ time_id  │  │---------------------│  │ post_id (PK)  │
+│ date     │  │ user_id (FK)        │  │ post_type     │
+│ day      │◄─┤ post_id (FK)        ├─►│ category_id(FK)│
+│ month    │  │ time_id (FK)        │  └──────┬────────┘
+│ year     │  │ device_id (FK)      │         ▼
+└──────────┘  │                     │   Dim_Category
+              │ like_count          │  ┌──────────────┐
+              │ comment_count       │  │ category_id  │
+              │ share_count         │  │ category_name│
+              │ view_count          │  └──────────────┘
+              └─────────┬───────────┘
+                        │
+                        │
+                 Dim_Device
+          ┌────────────────────────┐
+          │ device_id (PK)         │
+          │ device_type            │
+          │ OS                     │
+          │ app_version            │
+          └────────────────────────┘
+
+⭐ Star → User table has city, state, country in same table
+❄️ Snowflake → User → City → State → Country (normalized)
 ```
 
 #### Q-17 How Snowflake  multi-cluster , handles concurrency,advantages,architecture ?

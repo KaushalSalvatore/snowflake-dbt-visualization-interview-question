@@ -231,13 +231,31 @@ dbt parse
 Parses project files and validates structure.
 ```
 
-#### Q-19 Runs models using multiple threads for speed.? 
+#### Q-19 how we will run model class in sequence like scripts model A then b then c in dbt ? 
 ```bash
-dbt run --threads 8
-Runs models using multiple threads for speed.
+✅ Best Practice: Use ref() (Dependency-Based Execution)
 
-dbt run --fail-fast
-Stops execution immediately when a model fails.
+In dbt, models are executed in sequence using dependency management via the ref() function. By referencing upstream 
+models, dbt builds a DAG and ensures models run in the correct order automatically.
+
+Step 1: Model A (base model)
+-- models/model_a.sql
+SELECT * FROM source_table
+
+Step 2: Model B depends on A
+-- models/model_b.sql
+SELECT *
+FROM {{ ref('model_a') }}
+
+Step 3: Model C depends on B
+-- models/model_c.sql
+SELECT *
+FROM {{ ref('model_b') }}
+
+⚡ What Happens Internally
+model_a → model_b → model_c
+
+RUN : dbt run or dbt run --select model_c
 ```
 
 #### Q-20 how do we use snowflake table to dbt  ? 
