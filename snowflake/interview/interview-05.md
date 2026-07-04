@@ -345,24 +345,139 @@ Can a Blank Stored Procedure Run? : No, a completely blank stored procedure cann
 ✅ You can create a table inside a stored procedure
 ```
 
-#### Q-10
+#### Q-10 What are the use cases of Dynamic Tables in Snowflake ?
 ```bash
+Dynamic Tables are mainly used for automating incremental transformations, building near real-time ELT pipelines, reducing ETL complexity, and maintaining continuously updated analytical datasets in Snowflake
+
+1. Incremental Data Transformation
+
+CREATE DYNAMIC TABLE sales_summary
+TARGET_LAG = '5 minutes'
+WAREHOUSE = compute_wh
+AS
+SELECT
+    order_date,
+    SUM(amount) AS total_sales
+FROM orders
+GROUP BY order_date;
+
+2.Replacing Complex Scheduled Tasks
+
+Before dynamic tables, we used:
+
+Streams + Tasks
+Stored Procedures
+Cron-based scheduling
+
+Dynamic tables simplify this by automatically handling dependencies and refresh logic.
+
+3. Data Engineering for Slowly Changing Dimensions (SCD)
+
+4. Aggregation and Reporting Tables
 ```
 
-#### Q-11
+#### Q-11 What is the difference between Dynamic Tables and Stored Procedures in Snowflake, and when should we use each ?
 ```bash
+Dynamic Tables : 
+a) Incremental ETL Pipelines
+b) Real-Time Dashboards
+c) Bronze → Silver → Gold Pipeline
+
+Stored Procedure
+a) Complex ETL Logic
+b) Conditional Logic
+c) Error Handling
 ```
 
-#### Q-12
+#### Q-12 Difference Between Streams and Change Tracking in Snowflake ? 
 ```bash
+Change Tracking → tracks metadata changes in a table (what changed). [Change history information]
+Stream → captures actual changed records (insert/update/delete) for CDC processing. [Readable changed data]
+
+Change Tracking only records metadata about changes, while Streams provide actual changed records that can be consumed for incremental ETL pipelines.
+
+Use Stream when:
+
+✅ CDC pipeline
+✅ Incremental loading
+✅ Streams + Tasks automation
+✅ ETL processing
+
+Use Change Tracking when:
+
+✅ Audit/reporting
+✅ Compare data changes over time
+✅ Time travel analysis
+
+ALTER TABLE employee
+SET CHANGE_TRACKING = TRUE;
+
+Use Case:
+
+1. Suppose you want to compare what rows changed between two timestamps.
+
+SELECT *
+FROM employee
+CHANGES (
+    INFORMATION => DEFAULT
+)
+AT(TIMESTAMP => '2026-06-01')
+END(TIMESTAMP => '2026-06-02');
 ```
 
-#### Q-13
+#### Q-13 INFER_SCHEMA in Snowflake ?
 ```bash
+Suppose you receive a large Parquet or JSON file and don’t know the column structure.
+Instead of manually checking columns and creating a table, Snowflake can automatically infer it.
+
+Benefits:
+
+✅ Saves time
+✅ Reduces manual effort
+✅ Useful for schema discovery
+✅ Helpful in dynamic ingestion pipelines
 ```
 
-#### Q-14
+#### Q-14 Types of Views in Snowflake ? 
 ```bash
+Purpose
+Simplify complex queries.
+Hide complex joins and business logic.
+Provide a consistent interface to users.
+Restrict access to specific columns or rows.
+
+
+1. Normal View (Standard View)
+does not store data physically(view is a virtual table). Every time you query the view, Snowflake runs the underlying SQL again.
+
+CREATE VIEW emp_view AS
+SELECT emp_id,
+       emp_name,
+       salary
+FROM employee
+WHERE department = 'IT';
+
+2. Materialized View
+A Materialized View stores data physically. Snowflake automatically refreshes it when base table changes.
+
+CREATE MATERIALIZED VIEW sales_summary AS
+SELECT region,
+       SUM(sales_amount) total_sales
+FROM sales
+GROUP BY region;
+
+When queried:
+SELECT * FROM sales_summary;
+
+3. Secure View
+A Secure View hides underlying logic and sensitive data.
+
+CREATE SECURE VIEW customer_secure_view AS
+SELECT customer_id,
+       customer_name
+FROM customer;
+
+-> A Normal View is a permanent database object, but it is virtual (does not store data physically).
 ```
 
 #### Q-15
