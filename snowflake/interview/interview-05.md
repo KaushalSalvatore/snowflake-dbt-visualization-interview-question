@@ -516,12 +516,69 @@ SELECT *
 FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY;
 ```
 
-#### Q-16
+#### Q-16 Role of ACCOUNTADMIN , SYSADMIN , SECURITYADMIN , USERADMIN ?
 ```bash
+1. ACCOUNTADMIN Role
+combines privileges of: SYSADMIN,SECURITYADMIN
+
+Responsibilities
+
+✅ Account-level administration
+✅ Billing and usage monitoring
+✅ Create warehouses/databases
+✅ Manage users and roles
+✅ Manage security
+
+2. SYSADMIN Role
+
+Responsibilities
+
+✅ Create databases
+✅ Create schemas
+✅ Create tables/views
+✅ Create warehouses
+✅ Manage ETL objects
+
+3. SECURITYADMIN Role
+
+Responsibilities
+
+✅ Grant/Revoke access
+✅ Create custom roles
+✅ Assign privileges
+
+4. USERADMIN Role
+
+Responsibilities
+
+✅ Create users
+✅ Modify users
+✅ Reset password
+✅ Manage user properties
 ```
 
-#### Q-17
+#### Q-17 WHEN Clause in Task ?  
 ```bash
+The WHEN clause is used to conditionally execute a task only when a Boolean expression evaluates to TRUE.
+(Most commonly used with Streams to check if new data exists.)
+
+CREATE TASK process_sales_task
+WAREHOUSE = ETL_WH
+WHEN SYSTEM$STREAM_HAS_DATA('sales_stream')
+AS
+INSERT INTO sales_target
+SELECT * FROM sales_stream;
+
+What happens here?
+
+If stream has data → task runs ✅
+If stream has no data → task skips execution ❌
+
+Why use WHEN?
+
+Avoid unnecessary warehouse execution
+Save compute cost
+Efficient CDC pipeline
 ```
 
 #### Q-18
