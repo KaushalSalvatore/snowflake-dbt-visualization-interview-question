@@ -480,8 +480,40 @@ FROM customer;
 -> A Normal View is a permanent database object, but it is virtual (does not store data physically).
 ```
 
-#### Q-15
+#### Q-15 Difference Between ACCOUNT_USAGE and INFORMATION_SCHEMA ? 
 ```bash
+1. INFORMATION_SCHEMA
+INFORMATION_SCHEMA is used to get current metadata of objects.
+
+Example:
+Tables
+Views
+Columns
+Current query info
+
+SELECT *
+FROM MY_DB.INFORMATION_SCHEMA.TABLES;
+
+SELECT *
+FROM MY_DB.INFORMATION_SCHEMA.COLUMNS;
+
+2. ACCOUNT_USAGE
+
+Used for historical monitoring and auditing across the entire Snowflake account. 
+
+Query history
+Warehouse usage
+Credit consumption
+Login history
+Failed queries
+User activity
+
+SELECT *
+FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
+ORDER BY START_TIME DESC;
+
+SELECT *
+FROM SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY;
 ```
 
 #### Q-16
