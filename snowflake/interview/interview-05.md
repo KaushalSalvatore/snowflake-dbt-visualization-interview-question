@@ -581,8 +581,17 @@ Save compute cost
 Efficient CDC pipeline
 ```
 
-#### Q-18
+#### Q-18 Why Primary Key Can Have Duplicates in Snowflake?
 ```bash
+By default, Primary Key, Unique Key, and Foreign Key constraints are informational (metadata only).
+Snowflake does not enforce them on standard tables.
+
+Why Snowflake Designed It This Way?
+Snowflake is optimized for:
+Analytics
+Large-scale data processing
+Fast ingestion
+Enforcing constraints on billions of rows would slow loading performance.
 ```
 
 #### Q-19
