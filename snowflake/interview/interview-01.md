@@ -53,6 +53,8 @@ Clustering helps Snowflake:
 Scan fewer partitions
 Reduce query cost
 Improve performance for large tables
+
+
 ```
 
 #### Q-6 Can you tell me how to access the Snowflake Cloud data warehouse ?
@@ -189,9 +191,13 @@ High concurrency
 
 #### Q-15 How to reduce Snowflake cost ?
 ```bash
-- Auto-suspend
-- Right-size warehouse
-- Use result cache
+1. Enable Auto Suspend & Auto Resume
+2. Choose Correct Warehouse Size
+3. Use Cache Efficiently
+4. Use Separate Warehouse for Separate Teams
+5. Reduce Query Queue Timeout
+6. Use Temporary/Transient Tables for Staging
+7. Clean Unused Data
 ```
 
 #### Q-16 What is a Snowflake schema and star schema, and how is it used in data modeling ? 
@@ -328,6 +334,10 @@ ALTER WAREHOUSE BI_WH
 SET MIN_CLUSTER_COUNT = 1
 MAX_CLUSTER_COUNT = 3
 SCALING_POLICY = 'STANDARD';
+
+SCALING_POLICY = 'STANDARD' (Snowflake adds extra clusters aggressively/quickly when query queue increases.)
+
+SCALING_POLICY = 'ECONOMY' (Snowflake tries to use existing clusters as much as possible before adding new ones.)
 
 This means:
 Minimum 1 cluster always available

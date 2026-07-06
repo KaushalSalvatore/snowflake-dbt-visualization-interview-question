@@ -125,6 +125,24 @@ whether the data is in an internal or external stage.
 | Manual / batch | Continuous auto-ingest |
 | User triggered | Event driven           |
 | Cheaper        | Near real-time         |
+
+Snowflake Limitations :-
+
+1. Higher Cost for Continuous Loading
+Problem
+Loading thousands of tiny files becomes expensive.
+Best Practice
+Use larger files (100–250 MB compressed).
+
+2. Small File Problem (Each file triggers metadata and processing overhead.)
+
+3. No Complex Transformation
+
+4. Limited Error Handling
+
+5. Cannot Update/Delete Existing Data
+
+6. Duplicate File Handling Issue
 ```
 
 #### Q-8 What are Snowflake’s features for data recovery and time travel ?
