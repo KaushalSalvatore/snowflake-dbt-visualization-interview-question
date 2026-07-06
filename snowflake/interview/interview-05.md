@@ -594,8 +594,26 @@ Fast ingestion
 Enforcing constraints on billions of rows would slow loading performance.
 ```
 
-#### Q-19
+#### Q-19 Disaster Recovery (DR) in Snowflake across regions.? 
 ```bash
+Suppose your Snowflake account is in US region. (AWS US-East-1)
+
+Now imagine:
+Earthquake 🌍
+Region outage
+Cloud datacenter failure
+
+Region-to-region disaster recovery is NOT automatic by default ❌
+If the whole US region fails:
+Your Snowflake account in that region may become unavailable.
+
+Snowflake provides high availability within a region ✅
+
+Solution: Database Replication + Failover
+
+Cross-Region Replication
+Primary Region → AWS US-East
+Backup Region → AWS US-West
 ```
 
 #### Q-20
