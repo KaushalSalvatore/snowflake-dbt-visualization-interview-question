@@ -151,6 +151,13 @@ WAREHOUSE = my_warehouse
 AS
 SELECT *
 FROM source_table;
+
+Automatically refreshes transformed data. Used for modern ELT pipelines.
+
+Characteristics
+✅ Auto refresh
+✅ Incremental processing
+✅ Dependency management
 ```
 
 #### Q-11 How does Snowflake support data governance ?

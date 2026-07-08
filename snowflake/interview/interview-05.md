@@ -265,6 +265,68 @@ Important Notes
 Masking happens during query execution
 Doesn’t change actual stored data
 Works with views, tables, and external tables
+
+A. Dynamic Data Masking :-
+
+CREATE OR REPLACE MASKING POLICY email_mask AS
+(val STRING)
+RETURNS STRING ->
+CASE
+    WHEN CURRENT_ROLE() = 'ADMIN'
+        THEN val
+    ELSE '****@gmail.com'
+END;
+
+ALTER TABLE CUSTOMER
+MODIFY COLUMN EMAIL
+SET MASKING POLICY email_mask;
+
+B. Conditional Masking :-
+
+CASE
+WHEN CURRENT_ROLE()='FINANCE'
+THEN salary
+ELSE NULL
+END
+
+C. Partial Masking
+CONCAT(
+LEFT(phone,2),
+'******',
+RIGHT(phone,2)
+)
+
+D. . Hash Masking
+SELECT SHA2(email);
+
+E. Tokenization
+
+F. Encryption
+
+G. With Tag-Based Masking : 
+
+CREATE TAG PII_DATA;
+
+CREATE MASKING POLICY pii_mask
+AS (val STRING)
+RETURNS STRING ->
+CASE
+    WHEN CURRENT_ROLE() = 'ADMIN'
+    THEN val
+    ELSE '********'
+END;
+
+
+ALTER TAG PII_DATA
+SET MASKING POLICY pii_mask;
+
+ALTER TABLE CUSTOMER
+MODIFY COLUMN EMAIL
+SET TAG PII_DATA='YES';
+
+ALTER TABLE EMPLOYEE
+MODIFY COLUMN SSN
+SET TAG PII_DATA='YES'; 
 ```
 
 #### Q-7 what 3NT in snowflake ?
@@ -616,6 +678,7 @@ Primary Region → AWS US-East
 Backup Region → AWS US-West
 ```
 
-#### Q-20
+#### Q-20 Dynamic Data Masking (Most Common)
 ```bash
+
 ```

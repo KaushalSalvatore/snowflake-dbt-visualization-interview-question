@@ -237,6 +237,8 @@ External Tables: External tables are pointers to data stored in external cloud s
 Azure Blob Storage, or Google Cloud Storage. Snowflake does not manage the storage of external tables, but it 
 does provide a structured way to access and query this data. External tables are typically used when the data is 
 not intended to be permanently stored within Snowflake, and is instead accessed directly from the external source.
+
+We cannot perform DML operations like INSERT, UPDATE, DELETE, or MERGE on External Tables because Snowflake does not physically own the data. External tables only store metadata and reference files located in external cloud storage such as S3 or ADLS. They are essentially read-only objects used for querying external data.
 ```
 
 #### Q-13 What do you mean by Snowflake Computing ?

@@ -13,6 +13,10 @@ Cloud Services Layer: This is the control layer of Snowflake. It manages everyth
 execution of queries, including query parsing, optimization, and metadata storage. It is also responsible 
 for managing the security, governance, and overall user experience.
 - Handles authentication, metadata, optimization, and query parsing.
+
+In Snowflake, an active warehouse is not required for metadata operations (some DDL commands), but a warehouse is required for queries (SELECT) and DML operations because compute resources are needed.
+1. DDL Operations (Sometimes No Warehouse Needed) (CREATE ALTER DROP SHOW DESCRIBE )
+2. Warehouse Required , Data processing (SELECT INSERT UPDATE DELETE MERGE COPY INTO)
 ```
 
 #### Q-2 What makes Snowflake different from traditional DWs ?
