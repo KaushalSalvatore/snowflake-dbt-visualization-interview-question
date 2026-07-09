@@ -678,7 +678,9 @@ Primary Region → AWS US-East
 Backup Region → AWS US-West
 ```
 
-#### Q-20 Dynamic Data Masking (Most Common)
+#### Q-20 How do you implement SCD Type 2 in Snowflake? EXPERT
 ```bash
-
+I implement SCD Type 2 with a Stream + Task + MERGE pattern. The MERGE
+handles inserts and updates atomically, and I always include a surrogate key for
+joining fact tables to the correct dimension version.
 ```
