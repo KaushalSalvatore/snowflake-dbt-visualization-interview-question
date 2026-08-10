@@ -36,3 +36,31 @@ SELECT
     customer_id,
     amount
 FROM {{ source('sales', 'orders') }}
+
+--3. multiple hooks 
+
+{{ config(
+    pre_hook=[
+        "DELETE FROM {{ this }} WHERE order_date = CURRENT_DATE",
+        "INSERT INTO audit_log VALUES ('orders', CURRENT_TIMESTAMP, 'STARTED')"
+    ],
+
+    post_hook=[
+        "GRANT SELECT ON {{ this }} TO ROLE REPORTING_ROLE",
+        "INSERT INTO audit_log VALUES ('orders', CURRENT_TIMESTAMP, 'COMPLETED')"
+    ]
+) }}
+
+SELECT *
+FROM {{ source('sales', 'orders') }}
+
+-- dbt_project.yml
+
+models:
+  my_project:
+    staging:
+      +pre-hook:
+        - "INSERT INTO audit_log VALUES ('STARTED', CURRENT_TIMESTAMP)"
+
+      +post-hook:
+        - "INSERT INTO audit_log VALUES ('COMPLETED', CURRENT_TIMESTAMP)"
