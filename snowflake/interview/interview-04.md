@@ -367,6 +367,15 @@ WAREHOUSE = my_wh
 SCHEDULE = '5 MINUTE'
 AS
 MERGE INTO orders_target ...
+
+Type of Streams :- 
+1. Standard stream — captures INSERT, UPDATE, DELETE (CDC on normal table)
+2. Append-only stream — captures INSERTs only (Source table where data is only appended)
+3. Insert-only stream — mainly for external/Iceberg-related use cases (External/Iceberg tables)
+
+METADATA$ACTION
+METADATA$ISUPDATE
+METADATA$ROW_ID
 ```
 
 #### Q-16 How to perform SCD Type 2 using SQL or stored procedures ?
