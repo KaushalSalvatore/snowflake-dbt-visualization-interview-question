@@ -22,7 +22,7 @@ and simple by reducing the clutter and allows for reusable logic. But still they
 #### Q-4 Can we split models across multiple schemas ?
 ```bash
 Yes, we can.By usingvthe schema configuration in your DBT_project.yml file or by using a config block 
-in the model file. For example: ‘schema: marketing.
+in the model file. For example: schema: marketing.
 ```
 
 #### Q-5 Do model names must be unique ? 
