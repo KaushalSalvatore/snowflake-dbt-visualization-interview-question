@@ -380,14 +380,52 @@ METADATA$ROW_ID
 
 #### Q-16 How to perform SCD Type 2 using SQL or stored procedures ?
 ```bash
-CREATE OR REPLACE TABLE dim_customer (
-    customer_id STRING,
-    name STRING,
-    city STRING,
-    start_date DATE,
-    end_date DATE,
-    is_current BOOLEAN
-);
+CREATE OR REPLACE PROCEDURE sp_load_customer_scd2()
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+BEGIN
+    -- Step 1: Expire changed records
+    UPDATE dim_customer d
+    SET
+        end_date = CURRENT_DATE - 1,
+        is_current = FALSE
+    FROM stg_customer s
+    WHERE d.customer_id = s.customer_id
+      AND d.is_current = TRUE
+      AND (
+            NVL(d.customer_name, '') <> NVL(s.customer_name, '')
+            OR NVL(d.city, '') <> NVL(s.city, '')
+            OR NVL(d.phone, '') <> NVL(s.phone, '')
+          );
+    -- Step 2: Insert new/current versions
+    INSERT INTO dim_customer (
+        customer_id,
+        customer_name,
+        city,
+        phone,
+        effective_date,
+        end_date,
+        is_current
+    )
+    SELECT
+        s.customer_id,
+        s.customer_name,
+        s.city,
+        s.phone,
+        CURRENT_DATE,
+        '9999-12-31',
+        TRUE
+    FROM stg_customer s
+    LEFT JOIN dim_customer d
+        ON s.customer_id = d.customer_id
+       AND d.is_current = TRUE
+    WHERE d.customer_id IS NULL;
+    RETURN 'SCD Type 2 load completed successfully';
+
+END;
+$$;
 ```
 
 #### Q-17 how to create a view table ? 
