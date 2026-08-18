@@ -167,6 +167,18 @@ of data for recovery purposes.
 
 Time Travel → Recover accidental delete
 Fail-safe → Catastrophic failure recovery
+
+Write a query to find late-arriving orders using Time Travel 
+
+SELECT *
+FROM fact_orders
+AT (TIMESTAMP => CURRENT_TIMESTAMP - INTERVAL '1 DAY')
+WHERE order_date < CURRENT_DATE - 7;
+
+means the order is more than 7 days old.
+AT (TIMESTAMP => CURRENT_TIMESTAMP - INTERVAL '1 DAY')
+
+So the overall query is trying to identify old orders that were present/visible in the historical version of the table.
 ```
 
 #### Q-9 How Snowflake handles skewed data ?

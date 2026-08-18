@@ -140,7 +140,60 @@ Information about stored data used for optimization.
 
 #### Q-12 What is pruning?
 ```bash
-Skipping unnecessary micro-partitions during queries.
+Snowflake tries to read only the micro-partitions that contain the required data, instead of scanning the entire table.
+
+Practical Example
+Suppose you have an orders table with 1 billion rows:
+
+CREATE TABLE orders (
+    order_id     NUMBER,
+    customer_id  NUMBER,
+    order_date   DATE,
+    amount       NUMBER
+);
+
+Your data covers 2024–2026.
+
+ORDERS TABLE
+Micro-partition 1 → Jan 2024
+Micro-partition 2 → Feb 2024
+Micro-partition 3 → Mar 2024
+...
+Micro-partition 20 → Aug 2025
+Micro-partition 21 → Sep 2025
+...
+Micro-partition 36 → Dec 2026
+
+Now you execute:
+
+SELECT *
+FROM orders
+WHERE order_date = '2026-08-10';
+
+Snowflake can determine:
+
+Partition 1  ❌ Skip
+Partition 2  ❌ Skip
+Partition 3  ❌ Skip
+...
+Partition 35 ✅ Read
+Partition 36 ❌ Skip
+
+A. How to check pruning in Snowflake ?
+
+Run your query and open Query Profile.
+Look at the table scan operation.
+You'll see information related to:
+
+Partitions scanned
+Partitions total
+
+For example:
+Partitions total:   10,000
+Partitions scanned:   120
+
+That's a very good sign.
+It means Snowflake was able to prune most of the micro-partitions.
 ``` 
 
 #### Q-13 What is clustering key?
