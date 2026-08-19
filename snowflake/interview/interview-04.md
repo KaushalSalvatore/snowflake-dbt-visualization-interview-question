@@ -61,6 +61,7 @@ COPY INTO employees
 FROM @my_stage/employees.csv
 FILE_FORMAT = (TYPE = CSV)
 VALIDATION_MODE = RETURN_ERRORS;
+-- VALIDATION_MODE = 'RETURN_10_ROWS'
 
 VALIDATION_MODE is used in COPY INTO command to validate staged data files without loading them into the target table. 
 It helps identify errors like data type mismatch, missing columns, or format issues before actual data loading.
