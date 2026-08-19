@@ -61,7 +61,8 @@ COPY INTO employees
 FROM @my_stage/employees.csv
 FILE_FORMAT = (TYPE = CSV)
 VALIDATION_MODE = RETURN_ERRORS;
--- VALIDATION_MODE = 'RETURN_10_ROWS'
+#  VALIDATION_MODE = 'RETURN_10_ROWS'
+# ON_ERROR = 'CONTINUE',SKIP_FILE,SKIP_FILE_num,SKIP_FILE_num%,ABORT_STATEMENT,SKIP_FILE_num%;
 
 VALIDATION_MODE is used in COPY INTO command to validate staged data files without loading them into the target table. 
 It helps identify errors like data type mismatch, missing columns, or format issues before actual data loading.
@@ -472,7 +473,7 @@ CREATE STAGE backup_stage
 URL='s3://company-backup';
 ```
 
-#### Q-19 how to create snow pipe for streaming data
+#### Q-19 how to create snow pipe for streaming data ?
 ```bash
 create or replace pipe order_data 
 Auto_ingest = true 
