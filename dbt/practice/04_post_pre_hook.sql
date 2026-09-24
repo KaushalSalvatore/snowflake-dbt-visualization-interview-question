@@ -64,3 +64,38 @@ models:
 
       +post-hook:
         - "INSERT INTO audit_log VALUES ('COMPLETED', CURRENT_TIMESTAMP)"
+
+
+Post-hook — execute SQL after the model
+
+Now suppose fact_claim has successfully been created.
+
+After the model finishes, I want to grant access to a reporting role.
+
+{{
+    config(
+        materialized='table',
+
+        post_hook="
+            grant select
+            on table {{ this }}
+            to role RISK_ANALYST
+        "
+    )
+}}
+
+Execution:
+
+dbt starts
+   ↓
+Pre-hook
+   ↓
+Build fact_claim
+   ↓
+Model succeeds
+   ↓
+Post-hook
+   ↓
+Grant access
+
+This is a good example of using a post-hook for an operational action after successful model creation.

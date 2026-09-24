@@ -27,6 +27,45 @@ where updated_at >
 {% endif %}
 
 
+1. Merge Strategy
+
+{{ config(
+    materialized='incremental',
+    unique_key='order_id',
+    incremental_strategy='merge'
+) }}
+select 
+    order_id,
+    customer_id,
+    order_date,
+    amount
+from {{ ref('stg_orders') }}
+
+
+2. Insert-Only Strategy
+
+{{ config(
+    materialized='incremental',
+    unique_key='order_id',
+    incremental_strategy='insert_only'
+) }}
+select *
+from {{ ref('stg_orders') }}
+where order_date > (select max(order_date) from {{ this }})
+
+3. Delete+Insert (Insert_Overwrite) Strategy
+
+{{ config(
+    materialized='incremental',
+    incremental_strategy='delete+insert',
+    partition_by='order_date::date'
+) }}
+select *
+from {{ ref('stg_orders') }
+
+
+
+
 -- Incremental strategies
 -- Strategy One-liner
 -- append Insert only, no dedup — pure event logs
